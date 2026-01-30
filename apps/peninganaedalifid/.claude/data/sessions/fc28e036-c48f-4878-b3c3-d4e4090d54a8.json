@@ -1,7 +1,0 @@
-{
-  "session_id": "fc28e036-c48f-4878-b3c3-d4e4090d54a8",
-  "prompts": [
-    "ok now we just need to add any specific vercel files that should be set. the configured root folder will be in apps/peninganaedalifid and I dont want vercel to include any of the information not in the apps folder basically so maybe we need a .vercelignore file",
-    "do we need to configure somewhere the domain peninganaedalifid.is in the vercel files?"
-  ]
-}
