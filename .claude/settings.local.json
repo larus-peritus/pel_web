@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(app-planning-skill)",
+      "Bash(npx create-next-app@latest:*)",
+      "Bash(npm install:*)",
+      "Bash(timeout 15 npm run dev)",
+      "Bash(npm run build:*)",
+      "Bash(npm run test:run:*)",
+      "Bash(npm test:*)",
+      "Bash(npx tsc:*)",
+      "Bash(test:*)",
+      "Bash(npm run test:*)",
+      "Skill(spec-workflow)",
+      "Bash(node -c:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run:*)",
+      "Bash(npx next build:*)",
+      "WebSearch",
+      "WebFetch(domain:island.is)"
+    ]
+  }
+}

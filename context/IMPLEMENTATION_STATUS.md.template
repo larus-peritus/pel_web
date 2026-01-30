@@ -1,0 +1,156 @@
+# Implementation Status
+
+Track the current state of implementation for all features.
+
+**Last Updated**: [YYYY-MM-DD HH:MM]
+**Updated By**: [Agent/User]
+
+---
+
+## Summary
+
+| Metric | Count |
+|--------|-------|
+| Total Features | [X] |
+| Features Complete | [Y] |
+| Features In Progress | [Z] |
+| Total Tasks | [A] |
+| Tasks Complete | [B] |
+| Tasks Remaining | [C] |
+
+---
+
+## Feature: [Feature Name 1]
+
+**Status**: 🔄 In Progress ([X]/[Y] tasks complete)
+**Started**: [YYYY-MM-DD]
+**Spec Files**:
+- Requirements: [specs/feature-1-requirements.md](../specs/feature-1-requirements.md)
+- Design: [specs/feature-1-design.md](../specs/feature-1-design.md)
+- Tasks: [specs/feature-1-tasks.md](../specs/feature-1-tasks.md)
+
+### Completed Tasks
+- ✅ Task 1.1: [Task description]
+  - Completed: [YYYY-MM-DD]
+  - Files: `apps/my-app/src/[file]`
+  - Tests: `apps/my-app/tests/[test-file]`
+  - Context: [context/modules/Module1.md](modules/Module1.md)
+  - Notes: [Any implementation notes]
+
+- ✅ Task 1.2: [Task description]
+  - Completed: [YYYY-MM-DD]
+  - Files: `apps/my-app/src/[file]`
+  - Tests: `apps/my-app/tests/[test-file]`
+  - Context: [context/modules/Module2.md](modules/Module2.md)
+
+### In Progress
+- 🔄 Task 1.3: [Task description]
+  - Started: [YYYY-MM-DD]
+  - Assigned to: [Builder agent / Developer]
+  - Expected completion: [Date]
+
+### Pending
+- ⏳ Task 1.4: [Task description]
+  - Blocked by: Task 1.3
+- ⏳ Task 1.5: [Task description]
+
+### Modules Created
+- [Module1](modules/Module1.md) - [Purpose]
+- [Module2](modules/Module2.md) - [Purpose]
+
+### Feature Documentation
+See: [context/features/feature-1.md](features/feature-1.md)
+
+---
+
+## Feature: [Feature Name 2]
+
+**Status**: ⏳ Pending (0/[Y] tasks complete)
+**Started**: Not yet started
+**Spec Files**:
+- Requirements: [specs/feature-2-requirements.md](../specs/feature-2-requirements.md)
+- Design: [specs/feature-2-design.md](../specs/feature-2-design.md)
+- Tasks: [specs/feature-2-tasks.md](../specs/feature-2-tasks.md)
+
+### Pending
+- ⏳ Task 2.1: [Task description]
+- ⏳ Task 2.2: [Task description]
+
+---
+
+## Feature: [Feature Name 3]
+
+**Status**: ✅ Complete ([Y]/[Y] tasks complete)
+**Started**: [YYYY-MM-DD]
+**Completed**: [YYYY-MM-DD]
+**Spec Files**:
+- Requirements: [specs/feature-3-requirements.md](../specs/feature-3-requirements.md)
+- Design: [specs/feature-3-design.md](../specs/feature-3-design.md)
+- Tasks: [specs/feature-3-tasks.md](../specs/feature-3-tasks.md)
+
+### Completed Tasks
+- ✅ Task 3.1: [Task description] - Completed [Date]
+- ✅ Task 3.2: [Task description] - Completed [Date]
+- ✅ Task 3.3: [Task description] - Completed [Date]
+
+### Modules Created
+- [Module A](modules/ModuleA.md) - [Purpose]
+- [Module B](modules/ModuleB.md) - [Purpose]
+
+### Feature Documentation
+See: [context/features/feature-3.md](features/feature-3.md)
+
+---
+
+## Recent Activity
+
+### Last Batch (if using implementation-coordinator)
+**Date**: [YYYY-MM-DD]
+**Tasks Completed**: [N]
+**Tasks**:
+- ✅ Task 1.2 from Feature 1
+- ✅ Task 1.3 from Feature 1
+- ✅ Task 4.1 from Feature 4
+
+### Next Batch (if using implementation-coordinator)
+**Planned**: [N] tasks
+**Tasks**:
+- ⏳ Task 1.4 from Feature 1
+- ⏳ Task 4.2 from Feature 4
+- ⏳ Task 5.1 from Feature 5
+
+---
+
+## Dependencies
+
+### External Dependencies Added
+| Dependency | Version | Added | Purpose |
+|------------|---------|-------|---------|
+| [package] | [1.0.0] | [Date] | [Why added] |
+
+### Internal Module Dependencies
+| Module | Depends On |
+|--------|------------|
+| [Module A] | [Module B, Module C] |
+| [Module D] | [Module A] |
+
+---
+
+## Notes
+
+### Implementation Decisions
+- [Date]: [Decision made and rationale]
+- [Date]: [Decision made and rationale]
+
+### Issues Encountered
+- [Date]: [Issue and resolution]
+- [Date]: [Issue and resolution]
+
+### Performance Notes
+- [Date]: [Performance consideration or optimization]
+
+---
+
+**This file is automatically updated by builder-agent and implementation-coordinator.**
+
+

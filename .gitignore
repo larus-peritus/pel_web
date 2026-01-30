@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+
+# Build outputs
+dist/
+build/
+*.pyc
+*.pyo
+
+# Testing
+coverage/
+.pytest_cache/
+.coverage
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Temporary
+.tmp/
+temp/
+
+# Work Context (per-session)
+.claude-work-context.json
+
+# Worktrees
+worktrees/
+*.worktree
+
+# Local configs
+.local/
+
+

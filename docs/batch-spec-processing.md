@@ -1,0 +1,778 @@
+# Batch Spec Processing Guide
+
+Automate spec creation for all features in your app plan using sequential or parallel processing.
+
+## Overview
+
+**The Challenge**: Creating specs for multiple features one-by-one is time-consuming.
+
+**The Solution**: Batch processing creates specs for features automatically, processing 3 at a time with a strict 1:1 mapping (one feature = one subagent).
+
+**Key Features**:
+- Reads `specs/SPEC_CREATION_STATUS.md` to find features needing specs
+- Processes in batches of 3 (controlled parallelization)
+- Creates one subagent per feature (1:1 mapping)
+- Updates status file automatically
+
+**Time Savings**:
+- Manual (5 features): ~5-10 hours
+- Batch Processing (3 at a time): ~30-45 minutes for 5 features
+
+---
+
+## Visual Workflow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ PHASE 0: APP PLANNING                                          │
+│ @app-planner → APP_PLAN.md with 5 MVP features                 │
+│ Create specs/SPEC_CREATION_STATUS.md (or auto-created)         │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ PHASE 1: BATCH SPEC CREATION                                   │
+│ @spec-batch-processor                                           │
+│ Reads SPEC_CREATION_STATUS.md → Finds features needing specs   │
+│ Processes in batches of 3 (1 feature = 1 subagent)            │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                    ┌─────────┴─────────┐
+                    │                   │
+                    ▼                   ▼
+            SEQUENTIAL MODE     PARALLEL MODE
+              (One by one)      (Simultaneous)
+                    │                   │
+        ┌───────────┼───────────┐      │
+        │           │           │      │
+        ▼           ▼           ▼      ▼
+    Feature 1   Feature 2   Feature 3  ├─ Feature 1 (@subagent-1)
+        ↓           ↓           ↓      ├─ Feature 2 (@subagent-2)
+    Requirements Requirements Requirements├─ Feature 3 (@subagent-3)
+        ↓           ↓           ↓      ├─ Feature 4 (@subagent-4)
+    Design      Design      Design     └─ Feature 5 (@subagent-5)
+        ↓           ↓           ↓              │
+    Tasks       Tasks       Tasks          (All run in parallel)
+        │           │           │              │
+        └───────────┴───────────┘              │
+                    │                          │
+                    └──────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ OUTPUT: COMPLETE SPECS FOR ALL FEATURES                        │
+│                                                                 │
+│ specs/                                                          │
+│ ├── feature-1-requirements.md                                  │
+│ ├── feature-1-design.md                                        │
+│ ├── feature-1-tasks.md                                         │
+│ ├── feature-2-requirements.md                                  │
+│ ├── feature-2-design.md                                        │
+│ ├── feature-2-tasks.md                                         │
+│ ├── ...                                                         │
+│ └── feature-5-tasks.md                                         │
+│                                                                 │
+│ Total: 15 files (5 features × 3 files each)                    │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ PHASE 2: IMPLEMENTATION                                        │
+│ Follow tasks for each feature                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## SPEC_CREATION_STATUS.md
+
+The batch processor reads `specs/SPEC_CREATION_STATUS.md` to determine which features need specs.
+
+### File Format
+
+```markdown
+# Spec Creation Status
+
+## Essential Features (MVP)
+
+1. **Feature Name**
+   - Status: ⏳ Pending
+   - Requirements: [ ] Not Started
+   - Design: [ ] Not Started
+   - Tasks: [ ] Not Started
+
+2. **Another Feature**
+   - Status: ✅ Complete
+   - Requirements: ✅ Complete
+   - Design: ✅ Complete
+   - Tasks: ✅ Complete
+   - Spec Files:
+     - [requirements](feature-requirements.md)
+     - [design](feature-design.md)
+     - [tasks](feature-tasks.md)
+```
+
+### Creating the Status File
+
+**Option 1: Auto-created from APP_PLAN.md**
+- If `SPEC_CREATION_STATUS.md` doesn't exist, batch processor creates it from `APP_PLAN.md`
+
+**Option 2: Manual creation**
+- Copy `specs/SPEC_CREATION_STATUS.md.template`
+- Update with your features from APP_PLAN.md
+
+**Option 3: Generated by app-planner**
+- Future: app-planner could create status file automatically
+
+### Status Updates
+
+The batch processor automatically updates the status file:
+- After each batch completes
+- Marks features as "✅ Complete"
+- Adds links to created spec files
+- Preserves features still needing work
+
+---
+
+## Batch Processing Pattern
+
+### How It Works
+
+**1:1 Mapping**: One feature = One subagent = One task
+
+**Batch Size**: Process 3 features at a time
+
+**Example** (7 features needing specs):
+```
+Batch 1: Features 1-3
+  → Create 3 delegations to @spec-orchestrator
+  → 3 subagents run in parallel
+  → Wait for all 3 to complete
+
+Batch 2: Features 4-6
+  → Create 3 delegations to @spec-orchestrator
+  → 3 subagents run in parallel
+  → Wait for all 3 to complete
+
+Batch 3: Feature 7
+  → Create 1 delegation to @spec-orchestrator
+  → 1 subagent runs
+  → Wait for completion
+
+Total: 7 features = 7 subagents, processed in 3 batches
+```
+
+---
+
+## Two Processing Modes
+
+### Batch Mode (Default - Recommended)
+
+**How It Works**:
+- Reads SPEC_CREATION_STATUS.md
+- Processes features in batches of 3
+- Creates one subagent per feature
+- Updates status file after each batch
+
+**Timeline** (7 features):
+- ~10-15 minutes per batch of 3
+- Total: ~30-45 minutes for 7 features
+
+**Best For**:
+- ✅ Controlled parallelization
+- ✅ Resource management
+- ✅ Progress tracking
+- ✅ Status file integration
+
+**Command**:
+```bash
+@spec-batch-processor
+```
+
+### Sequential Mode (Legacy - Still Supported)
+
+**How It Works**:
+- Process one feature at a time
+- Wait for each spec to complete before starting next
+- Review each spec before proceeding
+
+**Timeline** (5 features):
+- ~10-15 minutes per feature
+- Total: 50-75 minutes
+
+**Best For**:
+- ✅ First time using batch processing
+- ✅ Want to review each spec
+- ✅ Features have dependencies
+- ✅ Learning the system
+- ✅ Limited computational resources
+
+**Command**:
+```bash
+/batch-spec sequential
+```
+
+**Example Output**:
+```markdown
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 SEQUENTIAL BATCH PROCESSING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Processing 5 features one by one...
+
+[1/5] User Authentication
+   Creating requirements... ✅
+   Creating design... ✅
+   Creating tasks... ✅
+   ✅ Complete (3 files)
+   
+   Review before continuing? (yes/no/revise)
+
+[2/5] Recipe Creation
+   Creating requirements... ✅
+   Creating design... ✅
+   Creating tasks... ✅
+   ✅ Complete (3 files)
+   
+   Review before continuing? (yes/no/revise)
+
+... (continues for all features)
+```
+
+---
+
+### Parallel Mode (Faster, Automated)
+
+**How It Works**:
+- Delegate each feature to a separate subagent
+- All features processed simultaneously
+- Review all specs together at end
+
+**Timeline** (5 features):
+- ~10-15 minutes total (regardless of feature count!)
+- Limited by longest individual feature
+
+**Best For**:
+- ✅ Experienced with spec creation
+- ✅ Features are independent
+- ✅ Want maximum speed
+- ✅ Will review all specs together
+- ✅ Team will distribute specs for review
+
+**Command**:
+```bash
+/batch-spec parallel
+```
+
+**Example Output**:
+```markdown
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚀 PARALLEL BATCH PROCESSING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Creating 5 subagents...
+
+Delegating features:
+@spec-orchestrator-1 → User Authentication
+@spec-orchestrator-2 → Recipe Creation
+@spec-orchestrator-3 → Recipe Browsing
+@spec-orchestrator-4 → Recipe Saving
+@spec-orchestrator-5 → Basic Search
+
+Processing in parallel... ⏳
+
+[Hook notifications will announce completions]
+
+✅ spec-orchestrator-3 completed (Recipe Browsing)
+✅ spec-orchestrator-1 completed (User Authentication)
+✅ spec-orchestrator-5 completed (Basic Search)
+✅ spec-orchestrator-2 completed (Recipe Creation)
+✅ spec-orchestrator-4 completed (Recipe Saving)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ ALL FEATURES PROCESSED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+5 features × 3 files = 15 spec documents created!
+```
+
+---
+
+## Complete Example: Recipe Sharing App
+
+### Starting Point
+
+**User Input**:
+```
+@app-planner I want to build a recipe sharing app
+```
+
+**APP_PLAN.md Output**:
+```markdown
+# App Plan: Recipe Sharing App
+
+## Essential Features (MVP)
+1. User Authentication
+2. Recipe Creation (CRUD)
+3. Recipe Browsing (Feed)
+4. Recipe Saving (Bookmarks)
+5. Basic Search & Filters
+```
+
+### Batch Processing
+
+**User Input**:
+```
+@spec-batch-processor
+```
+
+**Agent Response**:
+```markdown
+Found 5 Essential (MVP) features to spec.
+
+Processing Options:
+
+A) Sequential (50-75 minutes, review each)
+B) Parallel (10-15 minutes, review all at end)
+C) Custom Selection
+
+Your choice?
+```
+
+**User**: "B" (Parallel)
+
+**Processing**:
+```markdown
+🚀 Creating 5 subagents for parallel processing...
+
+@spec-orchestrator-1 → User Authentication
+@spec-orchestrator-2 → Recipe Creation
+@spec-orchestrator-3 → Recipe Browsing
+@spec-orchestrator-4 → Recipe Saving
+@spec-orchestrator-5 → Basic Search
+
+⏳ Processing... (10-15 minutes)
+
+[Subagent completions announced via hooks]
+
+✅ All 5 features complete!
+```
+
+### Output Files
+
+```
+specs/
+├── user-authentication-requirements.md      (EARS format)
+├── user-authentication-design.md            (Architecture)
+├── user-authentication-tasks.md             (Implementation)
+│
+├── recipe-creation-requirements.md
+├── recipe-creation-design.md
+├── recipe-creation-tasks.md
+│
+├── recipe-browsing-requirements.md
+├── recipe-browsing-design.md
+├── recipe-browsing-tasks.md
+│
+├── recipe-saving-requirements.md
+├── recipe-saving-design.md
+├── recipe-saving-tasks.md
+│
+├── basic-search-requirements.md
+├── basic-search-design.md
+└── basic-search-tasks.md
+
+Total: 15 files
+```
+
+### Updated APP_PLAN.md
+
+```markdown
+## Essential Features (MVP)
+
+1. **User Authentication**
+   - Status: ✅ Spec Created
+   - Specs: [requirements](specs/user-authentication-requirements.md) | 
+            [design](specs/user-authentication-design.md) | 
+            [tasks](specs/user-authentication-tasks.md)
+   - Implementation: [ ] Not Started
+
+2. **Recipe Creation**
+   - Status: ✅ Spec Created
+   - Specs: [requirements](specs/recipe-creation-requirements.md) | 
+            [design](specs/recipe-creation-design.md) | 
+            [tasks](specs/recipe-creation-tasks.md)
+   - Implementation: [ ] Not Started
+
+[... repeated for all features]
+```
+
+---
+
+## After Batch Processing
+
+### Review Specs
+
+**Sequential Mode**: Already reviewed during processing
+
+**Parallel Mode**: Review all at once:
+```markdown
+Review Checklist:
+
+specs/user-authentication-*
+- [ ] Requirements complete and testable?
+- [ ] Design addresses all requirements?
+- [ ] Tasks are actionable and sequenced?
+
+specs/recipe-creation-*
+- [ ] Requirements complete and testable?
+- [ ] Design addresses all requirements?
+- [ ] Tasks are actionable and sequenced?
+
+[... repeat for all features]
+```
+
+### Choose Implementation Strategy
+
+**Option A: Sequential Implementation** (Solo Developer)
+```markdown
+Implement one feature at a time:
+
+Week 1: User Authentication
+- Follow specs/user-authentication-tasks.md
+- Test and validate
+- ✅ Feature complete
+
+Week 2: Recipe Creation
+- Follow specs/recipe-creation-tasks.md
+- Test and validate
+- ✅ Feature complete
+
+[... continue for all features]
+```
+
+**Option B: Parallel Implementation** (Team)
+```bash
+# Create isolated worktrees
+/create_worktree user-authentication
+/create_worktree recipe-creation
+/create_worktree recipe-browsing
+/create_worktree recipe-saving
+/create_worktree basic-search
+
+# Assign to team members
+# Dev A: user-authentication (port 4010)
+# Dev B: recipe-creation (port 4020)
+# Dev C: recipe-browsing (port 4030)
+# Dev D: recipe-saving (port 4040)
+# Dev E: basic-search (port 4050)
+
+# All implement in parallel
+```
+
+---
+
+## Advanced: Custom Selection
+
+For selective batch processing:
+
+**Command**:
+```bash
+/batch-spec custom
+```
+
+**Use Cases**:
+- Only spec some features now
+- Process Phase 2 features after MVP complete
+- Re-spec specific features after feedback
+- Skip features not ready
+
+**Example**:
+```markdown
+Select features to spec:
+
+Essential (MVP):
+[✓] 1. User Authentication
+[ ] 2. Recipe Creation
+[✓] 3. Recipe Browsing
+[ ] 4. Recipe Saving
+[✓] 5. Basic Search
+
+Important (Phase 2):
+[ ] 6. Advanced Search
+[ ] 7. User Profiles
+[ ] 8. Recipe Ratings
+
+Selected: 3 features
+
+Process mode: (sequential/parallel)
+```
+
+---
+
+## Handling Errors
+
+### Spec Creation Fails
+
+**Sequential Mode**:
+```markdown
+⚠️ Error creating spec for Recipe Creation
+
+Error: [Details]
+
+Options:
+A) Retry this feature
+B) Skip and continue
+C) Stop batch processing
+```
+
+**Parallel Mode**:
+```markdown
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ BATCH PROCESSING COMPLETE WITH ERRORS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ User Authentication (3 files)
+❌ Recipe Creation (Error: [details])
+✅ Recipe Browsing (3 files)
+✅ Recipe Saving (3 files)
+❌ Basic Search (Error: [details])
+
+Successfully created: 9/15 files (3 features)
+Failed: 2 features
+
+Options:
+A) Retry failed features sequentially
+B) Manually create failed specs
+C) Continue with successful specs
+```
+
+### APP_PLAN.md Not Found
+
+```markdown
+❌ Error: APP_PLAN.md not found
+
+You need to create an app plan first.
+
+Options:
+A) Create app plan now (@app-planner [app idea])
+B) Specify custom feature list
+C) Cancel batch processing
+```
+
+---
+
+## Performance Considerations
+
+### Sequential Mode
+- **Memory**: Low (one feature at a time)
+- **CPU**: Moderate
+- **Network**: Minimal
+- **Best For**: Laptops, limited resources
+
+### Parallel Mode
+- **Memory**: Higher (N subagents active)
+- **CPU**: High (N parallel processes)
+- **Network**: Moderate (if researching docs)
+- **Best For**: Workstations, servers, cloud environments
+
+### Recommendations
+
+**5 or fewer features**: Either mode works well
+
+**6-10 features**: 
+- Sequential: 1-2 hours
+- Parallel: Still ~15 minutes (highly recommended)
+
+**10+ features**:
+- Sequential: 2-3+ hours
+- Parallel: ~15-20 minutes (strongly recommended)
+- Or: Batch MVP features separately from Phase 2
+
+---
+
+## Integration with Worktrees
+
+After batch spec creation, optionally create worktrees for parallel implementation:
+
+**Workflow**:
+```bash
+# 1. Batch create all specs
+/batch-spec parallel
+
+# 2. Create isolated environments for all features
+/create_worktree user-authentication
+/create_worktree recipe-creation
+/create_worktree recipe-browsing
+/create_worktree recipe-saving
+/create_worktree basic-search
+
+# 3. Team implements in parallel
+# Each dev works in isolated worktree
+# No conflicts, isolated ports and databases
+```
+
+**Directory Structure**:
+```
+your-repo/
+├── APP_PLAN.md
+├── specs/
+│   └── [15 spec files]
+└── trees/
+    ├── user-authentication/    (Dev A, port 4010)
+    ├── recipe-creation/        (Dev B, port 4020)
+    ├── recipe-browsing/        (Dev C, port 4030)
+    ├── recipe-saving/          (Dev D, port 4040)
+    └── basic-search/           (Dev E, port 4050)
+```
+
+---
+
+## Comparison: Manual vs Batch
+
+### Manual Workflow (Traditional)
+
+```
+@app-planner [idea] → APP_PLAN.md
+
+@spec-orchestrator [feature 1]
+  → Spec 1 (10-15 min)
+
+@spec-orchestrator [feature 2]
+  → Spec 2 (10-15 min)
+
+@spec-orchestrator [feature 3]
+  → Spec 3 (10-15 min)
+
+@spec-orchestrator [feature 4]
+  → Spec 4 (10-15 min)
+
+@spec-orchestrator [feature 5]
+  → Spec 5 (10-15 min)
+
+Total: 50-75 minutes (must be done sequentially)
+```
+
+### Batch Workflow (Automated) ✨
+
+```
+@app-planner [idea] → APP_PLAN.md
+
+/batch-spec parallel
+  → All 5 specs (10-15 min total!)
+
+Total: 10-15 minutes (all in parallel)
+
+Time Saved: 40-60 minutes!
+```
+
+---
+
+## Best Practices
+
+### Before Batch Processing
+- ✅ Ensure APP_PLAN.md is complete
+- ✅ Features are clearly defined
+- ✅ Priorities are set (MVP vs Phase 2)
+- ✅ Feature names are descriptive
+
+### During Batch Processing
+- **Sequential**: Review each spec before proceeding
+- **Parallel**: Monitor hook notifications for completions
+- **Both**: Have clear feature descriptions in APP_PLAN.md
+
+### After Batch Processing
+- ✅ Review all spec files
+- ✅ Validate requirements are testable
+- ✅ Check designs address all requirements
+- ✅ Verify tasks are actionable
+- ✅ Identify any missing details
+- ✅ Make revisions if needed
+
+### Implementation Planning
+- ✅ Choose sequential or parallel implementation
+- ✅ If parallel, create worktrees
+- ✅ Assign features to team members
+- ✅ Set up tracking (e.g., Kanban board)
+
+---
+
+## FAQ
+
+**Q: Can I mix sequential and parallel?**
+
+A: Yes! Use sequential for foundation features, then parallel for the rest:
+```bash
+# Sequential for foundation
+/batch-spec custom
+[Select: User Authentication, Core Data Models]
+[Choose: Sequential]
+
+# Then parallel for others
+/batch-spec custom
+[Select: Remaining features]
+[Choose: Parallel]
+```
+
+**Q: What if features have dependencies?**
+
+A: Three approaches:
+1. **Sequential Mode**: Process in dependency order
+2. **Parallel Mode**: Still OK - designs will note dependencies
+3. **Hybrid**: Sequential for foundation, parallel for rest
+
+**Q: Can I batch spec Phase 2 features later?**
+
+A: Absolutely! After MVP is implemented:
+```bash
+# Update APP_PLAN.md with Phase 2 features
+/batch-spec custom
+[Select Phase 2 features]
+```
+
+**Q: What happens if one spec fails in parallel mode?**
+
+A: Batch processor reports failures at the end, offers to retry failed ones sequentially.
+
+**Q: Can I stop batch processing mid-way?**
+
+A: Yes, in sequential mode. Parallel mode must complete (subagents already running).
+
+**Q: How do I revise specs after batch creation?**
+
+A: Use phase-specific agents:
+```bash
+@requirements-agent revise specs/feature-name-requirements.md
+@design-agent revise specs/feature-name-design.md
+@tasks-agent revise specs/feature-name-tasks.md
+```
+
+---
+
+## Summary
+
+**Batch spec processing** transforms app planning:
+
+**Before**:
+- App Idea → Features → Manually spec each → Hours of work
+
+**After**:
+- App Idea → Features → Batch spec all → 15 minutes → Ready to build!
+
+**Key Benefits**:
+- ⚡ **Speed**: 10-15 min vs hours
+- 🎯 **Completeness**: All features spec'd at once
+- 🤝 **Team Ready**: Specs ready for parallel implementation
+- 📊 **Organized**: All specs in `specs/` directory
+- ✅ **Quality**: Each spec goes through full 3-phase process
+
+**Perfect for**: MVPs, greenfield projects, planning sprints, team coordination
+
+---
+
+**Related Documentation**:
+- [Main Guide](../SPEC_DRIVEN_DEVELOPMENT.md)
+- [Greenfield App Workflow](greenfield-app-workflow.md)
+- [Spec Batch Processor Agent](../.claude/agents/spec-batch-processor.md)
+- [Batch Spec Command](../.claude/commands/batch-spec.md)
+

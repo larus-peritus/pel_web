@@ -1,0 +1,37 @@
+# Vercel Ignore File
+# Excludes files not needed for production deployment
+
+# Development and testing
+tests/
+**/*.test.ts
+**/*.test.tsx
+**/__tests__/
+vitest.config.ts
+.prettierrc
+eslint.config.mjs
+
+# Documentation and specs (not needed in production)
+docs/
+specs/
+context/
+README.md
+
+# Build artifacts and caches
+.next/
+tsconfig.tsbuildinfo
+logs/
+
+# Claude Code / AI tooling
+.claude/
+.builder-completion.json
+
+# Environment examples (actual .env is in Vercel dashboard)
+.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local development
+node_modules/
+*.log
