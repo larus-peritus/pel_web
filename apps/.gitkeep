@@ -1,0 +1,5 @@
+# This file ensures the apps/ directory is tracked by git even when empty.
+# All application code should be created in subdirectories within apps/
+# Example: apps/my-app-name/
+
+

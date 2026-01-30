@@ -1,0 +1,10 @@
+<script>start("/Users/larusperitus/Documents/code/peritus/peritus-prompt-repository/.claude/");</script>
+<script>onHasParentDirectory();</script>
+<script>addRow("agents","agents",1,288,"288 B",1763029770,"13/11/2025, 10:29:30");</script>
+<script>addRow("commands","commands",1,416,"416 B",1763029770,"13/11/2025, 10:29:30");</script>
+<script>addRow("hooks","hooks",1,480,"480 B",1763029770,"13/11/2025, 10:29:30");</script>
+<script>addRow("output-styles","output-styles",1,416,"416 B",1763029770,"13/11/2025, 10:29:30");</script>
+<script>addRow("skills","skills",1,192,"192 B",1763029770,"13/11/2025, 10:29:30");</script>
+<script>addRow("status_lines","status_lines",1,96,"96 B",1763029770,"13/11/2025, 10:29:30");</script>
+<script>addRow(".DS_Store",".DS_Store",0,6148,"6.0 kB",1763030003,"13/11/2025, 10:33:23");</script>
+<script>addRow("settings.json","settings.json",0,4001,"3.9 kB",1763029770,"13/11/2025, 10:29:30");</script>

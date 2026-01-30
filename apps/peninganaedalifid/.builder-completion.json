@@ -1,0 +1,12 @@
+{
+  "task_id": "1.1",
+  "feature_name": "Pension-Aware FIRE Calculator",
+  "app_name": "peninganaedalifid",
+  "files_created": [
+    "src/types/pensionAwareFire.ts",
+    "context/modules/PensionAwareFireTypes.md",
+    "context/features/pension-aware-fire.md"
+  ],
+  "timestamp": "2026-01-30T15:45:00Z",
+  "status": "complete"
+}

@@ -1,0 +1,227 @@
+# System Architecture
+
+## Overview
+
+**Application**: [Your App Name]
+**Type**: [Web App / Mobile App / API / etc.]
+**Started**: [Date]
+**Last Updated**: [Date]
+
+## Application Structure
+
+```
+apps/
+└── [your-app]/
+    ├── src/
+    │   ├── components/     ← UI components (if applicable)
+    │   ├── services/       ← Business logic
+    │   ├── models/         ← Data models
+    │   ├── utils/          ← Utility functions
+    │   └── index.ts        ← Entry point
+    ├── tests/
+    │   ├── unit/           ← Unit tests
+    │   └── integration/    ← Integration tests
+    └── docs/               ← App-specific documentation
+```
+
+## Technology Stack
+
+### Frontend (if applicable)
+- **Framework**: [e.g., React 18, Vue 3]
+- **Language**: [TypeScript 5.0]
+- **Build Tool**: [Vite, Webpack]
+- **UI Library**: [Tailwind CSS, Material-UI]
+
+### Backend (if applicable)
+- **Runtime**: [Node.js 20, Python 3.11]
+- **Framework**: [Express, FastAPI]
+- **Language**: [TypeScript, Python]
+
+### Database
+- **Primary**: [PostgreSQL 15, MongoDB]
+- **ORM/ODM**: [Prisma, TypeORM, Mongoose]
+
+### Testing
+- **Unit Tests**: [Jest, Vitest, pytest]
+- **Integration Tests**: [Supertest, pytest]
+- **E2E Tests**: [Playwright, Cypress]
+
+### Dependencies
+Key dependencies and their purposes:
+
+| Dependency | Version | Purpose |
+|------------|---------|---------|
+| [package1] | [1.0.0] | [Why it's used] |
+| [package2] | [2.1.0] | [Why it's used] |
+
+## Architectural Patterns
+
+### Overall Pattern
+[e.g., "Layered architecture with clear separation between presentation, business logic, and data access"]
+
+### Design Patterns Used
+- **[Pattern Name]**: Used for [purpose]
+- **[Pattern Name]**: Used for [purpose]
+
+### Code Organization
+- **Feature-based**: Code organized by feature, not by type
+- **Modular**: Each module is self-contained
+- **Testable**: Business logic separated from I/O
+
+## Conventions
+
+### File Naming
+- **Components**: PascalCase (e.g., `UserProfile.tsx`)
+- **Services**: PascalCase (e.g., `AuthService.ts`)
+- **Utilities**: camelCase (e.g., `formatDate.ts`)
+- **Tests**: `[filename].test.ts` or `[filename].spec.ts`
+
+### Code Style
+- **Indentation**: [2 spaces / 4 spaces / tabs]
+- **Quotes**: [Single / Double]
+- **Semicolons**: [Required / Optional]
+- **Linter**: [ESLint / Pylint]
+- **Formatter**: [Prettier / Black]
+
+### Naming Conventions
+- **Variables**: camelCase
+- **Constants**: UPPER_SNAKE_CASE
+- **Classes**: PascalCase
+- **Functions**: camelCase
+- **Interfaces/Types**: PascalCase with optional `I` prefix
+
+## Data Flow
+
+### Request Flow (if applicable)
+```
+Client Request
+    ↓
+API Gateway / Router
+    ↓
+Controller / Handler
+    ↓
+Service Layer (Business Logic)
+    ↓
+Data Access Layer
+    ↓
+Database
+```
+
+### State Management (if applicable)
+- **Pattern**: [Redux, Context API, Vuex, Pinia]
+- **Flow**: [Unidirectional, Event-driven]
+
+## Integration Points
+
+### External APIs
+- **[API Name]**: [Purpose] - [docs link]
+- **[API Name]**: [Purpose] - [docs link]
+
+### Internal Services
+- **[Service Name]**: [Purpose] - [Location]
+
+### Databases
+- **Primary DB**: [Connection details, schema location]
+- **Cache**: [Redis, Memcached] - [Purpose]
+
+## Security
+
+### Authentication
+- **Method**: [JWT, OAuth 2.0, Session-based]
+- **Storage**: [Where tokens/sessions are stored]
+
+### Authorization
+- **Method**: [RBAC, ABAC, ACL]
+- **Implementation**: [Where/how permissions are checked]
+
+### Data Protection
+- **Encryption**: [At rest, in transit]
+- **Sensitive Data**: [How it's handled]
+
+## Error Handling
+
+### Strategy
+- **Validation Errors**: [How handled]
+- **Business Logic Errors**: [How handled]
+- **System Errors**: [How handled]
+
+### Logging
+- **Logger**: [Winston, Pino, Python logging]
+- **Levels**: [DEBUG, INFO, WARN, ERROR]
+- **Location**: [Where logs are stored/sent]
+
+## Testing Strategy
+
+### Unit Tests
+- **Coverage Target**: [80%, 90%]
+- **Location**: `apps/[app]/tests/unit/`
+- **Run**: `npm test` or `pytest`
+
+### Integration Tests
+- **Scope**: [API endpoints, service integration]
+- **Location**: `apps/[app]/tests/integration/`
+
+### E2E Tests
+- **Scope**: [Critical user flows]
+- **Location**: `apps/[app]/tests/e2e/`
+
+## Deployment
+
+### Environment
+- **Development**: [Local setup]
+- **Staging**: [Staging environment details]
+- **Production**: [Production environment details]
+
+### CI/CD
+- **Platform**: [GitHub Actions, GitLab CI, Jenkins]
+- **Pipeline**: [Build → Test → Deploy]
+
+## Performance Considerations
+
+### Optimization Strategies
+- **Caching**: [What and where]
+- **Database**: [Indexing, query optimization]
+- **Assets**: [Compression, CDN]
+
+### Monitoring
+- **APM**: [New Relic, Datadog, Application Insights]
+- **Metrics**: [What's tracked]
+- **Alerts**: [What triggers alerts]
+
+## Decisions and Trade-offs
+
+### Key Architectural Decisions
+
+#### Decision 1: [Decision Title]
+- **Date**: [YYYY-MM-DD]
+- **Context**: [Why this decision was needed]
+- **Decision**: [What was decided]
+- **Rationale**: [Why this option was chosen]
+- **Consequences**: [Impact of this decision]
+
+#### Decision 2: [Decision Title]
+- **Date**: [YYYY-MM-DD]
+- **Context**: [Why this decision was needed]
+- **Decision**: [What was decided]
+- **Rationale**: [Why this option was chosen]
+- **Consequences**: [Impact of this decision]
+
+## Future Considerations
+
+### Planned Improvements
+- [Improvement 1]
+- [Improvement 2]
+
+### Known Limitations
+- [Limitation 1]
+- [Limitation 2]
+
+### Tech Debt
+- [Tech debt item 1]
+- [Tech debt item 2]
+
+---
+
+**This document should be updated whenever significant architectural changes are made.**
+
+

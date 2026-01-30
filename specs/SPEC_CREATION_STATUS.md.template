@@ -1,0 +1,107 @@
+# Spec Creation Status
+
+Track the status of spec creation for all features in your app plan.
+
+## How to Use
+
+1. Copy this template to `specs/SPEC_CREATION_STATUS.md`
+2. Update with features from your APP_PLAN.md
+3. Use `@spec-batch-processor` to process features in batches of 3
+4. Status file updates automatically as specs are created
+
+## Status Indicators
+
+- ⏳ **Pending** - Not started
+- 🔄 **In Progress** - Partially complete
+- ✅ **Complete** - All phases done
+
+---
+
+## Essential Features (MVP)
+
+### 1. [Feature Name 1]
+- **Status**: ⏳ Pending
+- **Description**: [Brief description from APP_PLAN.md]
+- **Priority**: Essential (MVP)
+- **Requirements**: [ ] Not Started
+- **Design**: [ ] Not Started
+- **Tasks**: [ ] Not Started
+- **Spec Files**: (will be added when complete)
+
+### 2. [Feature Name 2]
+- **Status**: ⏳ Pending
+- **Description**: [Brief description from APP_PLAN.md]
+- **Priority**: Essential (MVP)
+- **Requirements**: [ ] Not Started
+- **Design**: [ ] Not Started
+- **Tasks**: [ ] Not Started
+- **Spec Files**: (will be added when complete)
+
+### 3. [Feature Name 3]
+- **Status**: ⏳ Pending
+- **Description**: [Brief description from APP_PLAN.md]
+- **Priority**: Essential (MVP)
+- **Requirements**: [ ] Not Started
+- **Design**: [ ] Not Started
+- **Tasks**: [ ] Not Started
+- **Spec Files**: (will be added when complete)
+
+---
+
+## Important Features (Phase 2)
+
+### 4. [Feature Name 4]
+- **Status**: ⏳ Pending
+- **Description**: [Brief description from APP_PLAN.md]
+- **Priority**: Important (Phase 2)
+- **Requirements**: [ ] Not Started
+- **Design**: [ ] Not Started
+- **Tasks**: [ ] Not Started
+- **Spec Files**: (will be added when complete)
+
+---
+
+## Nice-to-Have Features (Future)
+
+### 5. [Feature Name 5]
+- **Status**: ⏳ Pending
+- **Description**: [Brief description from APP_PLAN.md]
+- **Priority**: Nice-to-Have (Future)
+- **Requirements**: [ ] Not Started
+- **Design**: [ ] Not Started
+- **Tasks**: [ ] Not Started
+- **Spec Files**: (will be added when complete)
+
+---
+
+## Example: Completed Feature
+
+### Example: User Authentication
+- **Status**: ✅ Complete
+- **Description**: Secure user registration and login
+- **Priority**: Essential (MVP)
+- **Requirements**: ✅ Complete
+- **Design**: ✅ Complete
+- **Tasks**: ✅ Complete
+- **Spec Files**:
+  - [Requirements](user-authentication-requirements.md)
+  - [Design](user-authentication-design.md)
+  - [Tasks](user-authentication-tasks.md)
+
+---
+
+## Processing Notes
+
+- Use `@spec-batch-processor` to process features in batches of 3
+- Each feature gets its own subagent (1:1 mapping)
+- Status updates automatically after each batch
+- Process Essential features first, then Phase 2, then Future
+
+---
+
+**Last Updated**: [Date]
+**Total Features**: [X]
+**Complete**: [Y]
+**Pending**: [Z]
+
+
