@@ -1,0 +1,17 @@
+{
+  "task_id": "8.1",
+  "feature_name": "Pension-Aware FIRE Calculator",
+  "app_name": "peninganaedalifid",
+  "files_created": [],
+  "files_updated": [
+    "tests/lib/calculations/pensionAwareFire.test.ts",
+    "context/modules/PensionAwareFireCalculations.md",
+    "context/IMPLEMENTATION_STATUS.md",
+    "specs/tasks-pension-aware-fire.md"
+  ],
+  "timestamp": "2026-01-30T17:10:00Z",
+  "status": "complete",
+  "tests_added": 13,
+  "total_tests": 132,
+  "all_tests_passing": true
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "session_id": "78f13fe9-cc0d-4523-b6fa-055b33bf73d9",
+    "transcript_path": "/Users/larusperitus/.claude/projects/-Users-larusperitus-Documents-code-peritus-pel-web-2/78f13fe9-cc0d-4523-b6fa-055b33bf73d9.jsonl",
+    "cwd": "/Users/larusperitus/Documents/code/peritus/pel_web_2/apps/peninganaedalifid",
+    "permission_mode": "default",
+    "hook_event_name": "SubagentStop",
+    "stop_hook_active": false,
+    "agent_id": "a1d5cf7",
+    "agent_transcript_path": "/Users/larusperitus/.claude/projects/-Users-larusperitus-Documents-code-peritus-pel-web-2/78f13fe9-cc0d-4523-b6fa-055b33bf73d9/subagents/agent-a1d5cf7.jsonl"
+  }
+]

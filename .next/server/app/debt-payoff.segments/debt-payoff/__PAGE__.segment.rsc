@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[79133,["/_next/static/chunks/90338593c01ee902.js","/_next/static/chunks/4beb115598c0dbe0.js","/_next/static/chunks/4e3a472e72031877.js","/_next/static/chunks/43dd79a3ead86062.js","/_next/static/chunks/48a72745ed623dbb.js","/_next/static/chunks/e7ec8e26dd65b8a9.js","/_next/static/chunks/f3505f173b1abff9.js","/_next/static/chunks/47a3532175349037.js"],"DebtPayoffPage"]
+3:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/a2dfb6fc5208ab9b.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"wCoR3Zf3JLvKYffqdujqM","rsc":["$","$1","c",{"children":[["$","$L2",null,{"actualHourlyWage":5000}],[["$","script","script-0",{"src":"/_next/static/chunks/43dd79a3ead86062.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/48a72745ed623dbb.js","async":true}],["$","script","script-2",{"src":"/_next/static/chunks/e7ec8e26dd65b8a9.js","async":true}],["$","script","script-3",{"src":"/_next/static/chunks/f3505f173b1abff9.js","async":true}],["$","script","script-4",{"src":"/_next/static/chunks/47a3532175349037.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null

@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/um-verkefnid/layout,_N_T_/um-verkefnid/page,_N_T_/um-verkefnid"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/um-verkefnid/__PAGE__",
+    "/um-verkefnid",
+    "/_index",
+    "/_head"
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/apple-icon.png",
+      "regex": "^/apple\\-icon\\.png(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/apple\\-icon\\.png(?:/)?$"
+    },
+    {
+      "page": "/barista-fire",
+      "regex": "^/barista\\-fire(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/barista\\-fire(?:/)?$"
+    },
+    {
+      "page": "/cut-impact",
+      "regex": "^/cut\\-impact(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/cut\\-impact(?:/)?$"
+    },
+    {
+      "page": "/debt-payoff",
+      "regex": "^/debt\\-payoff(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/debt\\-payoff(?:/)?$"
+    },
+    {
+      "page": "/eftirlaunahermir",
+      "regex": "^/eftirlaunahermir(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/eftirlaunahermir(?:/)?$"
+    },
+    {
+      "page": "/fatfire",
+      "regex": "^/fatfire(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/fatfire(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/fi-tala",
+      "regex": "^/fi\\-tala(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/fi\\-tala(?:/)?$"
+    },
+    {
+      "page": "/fire-leidarvisir",
+      "regex": "^/fire\\-leidarvisir(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/fire\\-leidarvisir(?:/)?$"
+    },
+    {
+      "page": "/icon.png",
+      "regex": "^/icon\\.png(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/icon\\.png(?:/)?$"
+    },
+    {
+      "page": "/leanfire",
+      "regex": "^/leanfire(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/leanfire(?:/)?$"
+    },
+    {
+      "page": "/lifeyristengd-fire",
+      "regex": "^/lifeyristengd\\-fire(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/lifeyristengd\\-fire(?:/)?$"
+    },
+    {
+      "page": "/notkunarskilmalar",
+      "regex": "^/notkunarskilmalar(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/notkunarskilmalar(?:/)?$"
+    },
+    {
+      "page": "/one-time-purchase",
+      "regex": "^/one\\-time\\-purchase(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/one\\-time\\-purchase(?:/)?$"
+    },
+    {
+      "page": "/personuvernd",
+      "regex": "^/personuvernd(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/personuvernd(?:/)?$"
+    },
+    {
+      "page": "/ro-fire",
+      "regex": "^/ro\\-fire(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/ro\\-fire(?:/)?$"
+    },
+    {
+      "page": "/snjoboltareiknivel",
+      "regex": "^/snjoboltareiknivel(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/snjoboltareiknivel(?:/)?$"
+    },
+    {
+      "page": "/sparnadar-markmidin",
+      "regex": "^/sparnadar\\-markmidin(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/sparnadar\\-markmidin(?:/)?$"
+    },
+    {
+      "page": "/sparnadarskyrsla",
+      "regex": "^/sparnadarskyrsla(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/sparnadarskyrsla(?:/)?$"
+    },
+    {
+      "page": "/um-verkefnid",
+      "regex": "^/um\\-verkefnid(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/um\\-verkefnid(?:/)?$"
+    },
+    {
+      "page": "/utgjaldareiknivel",
+      "regex": "^/utgjaldareiknivel(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/utgjaldareiknivel(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

@@ -1,0 +1,532 @@
+'use client';
+
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+} from 'react';
+import type {
+  CalculatorInputs,
+  CalculationResults,
+  IncomeInputs,
+  MoneyExpenses,
+  TimeExpenses,
+  Scenario,
+  Preset,
+  StoredState,
+  Subscription,
+  SubscriptionSummary,
+  MealCostData,
+  EatingOutData,
+  HomeCookingData,
+  MealCostComparisonResults,
+} from '@/types/calculator';
+import {
+  calculateSubscriptionSummary,
+  generateSubscriptionId,
+} from '@/lib/calculations/subscriptions';
+import {
+  calculateEatingOutSummary,
+  calculateHomeCookingSummary,
+  compareEatingOutVsHome,
+} from '@/lib/calculations/mealCost';
+import {
+  DEFAULT_EATING_OUT_DATA,
+  DEFAULT_HOME_COOKING_DATA,
+} from '@/lib/constants/mealCost';
+import { DEFAULT_INPUTS, STORAGE_KEY, STORAGE_VERSION } from '@/lib/defaults';
+import { calculateResults } from '@/lib/calculations';
+import { safeGetItem, safeSetItem } from '@/lib/storage/localStorage';
+
+/**
+ * Context type for calculator state management
+ */
+interface CalculatorContextType {
+  // Current inputs
+  inputs: CalculatorInputs;
+  setInputs: (inputs: CalculatorInputs) => void;
+  updateIncome: (income: Partial<IncomeInputs>) => void;
+  updateMoneyExpenses: (expenses: Partial<MoneyExpenses>) => void;
+  updateTimeExpenses: (time: Partial<TimeExpenses>) => void;
+
+  // Calculation results (derived from inputs)
+  results: CalculationResults | null;
+
+  // Scenarios
+  scenarios: Scenario[];
+  saveCurrentAsScenario: (name: string) => void;
+  deleteScenario: (id: string) => void;
+  loadScenario: (id: string) => void;
+
+  // Subscriptions
+  subscriptions: Subscription[];
+  subscriptionSummary: SubscriptionSummary | null;
+  addSubscription: (subscription: Omit<Subscription, 'id'>) => void;
+  updateSubscription: (id: string, updates: Partial<Subscription>) => void;
+  deleteSubscription: (id: string) => void;
+  toggleSubscription: (id: string) => void;
+
+  // Meal Cost Calculator
+  mealCostData: MealCostData;
+  updateMealCostData: (data: Partial<MealCostData>) => void;
+  updateEatingOut: (data: Partial<EatingOutData>) => void;
+  updateHomeCooking: (data: Partial<HomeCookingData>) => void;
+  mealCostSummary: MealCostComparisonResults | null;
+
+  // Persistence
+  saveToStorage: () => void;
+  loadFromStorage: () => void;
+  exportData: () => void;
+  importData: (file: File) => Promise<void>;
+  resetAll: () => void;
+
+  // Presets
+  applyPreset: (preset: Preset) => void;
+
+  // Status
+  isHydrated: boolean;
+}
+
+const CalculatorContext = createContext<CalculatorContextType | null>(null);
+
+/**
+ * Calculator Provider Component
+ *
+ * Provides calculator state management to all child components.
+ * Handles automatic calculation, persistence, and scenario management.
+ */
+export function CalculatorProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [inputs, setInputs] = useState<CalculatorInputs>(DEFAULT_INPUTS);
+  const [scenarios, setScenarios] = useState<Scenario[]>([]);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [mealCostData, setMealCostData] = useState<MealCostData>({
+    eatingOut: DEFAULT_EATING_OUT_DATA,
+    homeCooking: DEFAULT_HOME_COOKING_DATA,
+  });
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Calculate results whenever inputs change
+  const results = useMemo(() => {
+    // Only calculate if we have valid income data
+    if (inputs.income.grossAnnualIncome <= 0) return null;
+    return calculateResults(inputs);
+  }, [inputs]);
+
+  // Calculate subscription summary whenever subscriptions or actual wage changes
+  const subscriptionSummary = useMemo(() => {
+    const actualHourlyWage = results?.actualHourlyWage ?? 0;
+    return calculateSubscriptionSummary(subscriptions, actualHourlyWage);
+  }, [subscriptions, results?.actualHourlyWage]);
+
+  // Calculate meal cost summary whenever mealCostData or actual wage changes
+  const mealCostSummary = useMemo(() => {
+    const actualHourlyWage = results?.actualHourlyWage ?? 0;
+
+    // If no wage, we can still calculate costs but not life energy
+    // The comparison function handles wage = 0 gracefully
+    try {
+      return compareEatingOutVsHome(
+        mealCostData.eatingOut,
+        mealCostData.homeCooking,
+        actualHourlyWage
+      );
+    } catch (error) {
+      console.error('Error calculating meal cost summary:', error);
+      return null;
+    }
+  }, [mealCostData, results?.actualHourlyWage]);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const stored = safeGetItem<StoredState>(STORAGE_KEY);
+    if (stored && stored.version === STORAGE_VERSION) {
+      setInputs(stored.currentInputs);
+      setScenarios(stored.scenarios || []);
+      setSubscriptions(stored.subscriptions || []);
+      // Load mealCostData with fallback to defaults for backwards compatibility
+      if (stored.mealCostData) {
+        setMealCostData(stored.mealCostData);
+      }
+    }
+    setIsHydrated(true);
+  }, []);
+
+  // Auto-save to localStorage when inputs change (debounced)
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    const timeoutId = setTimeout(() => {
+      const state: StoredState = {
+        version: STORAGE_VERSION,
+        currentInputs: inputs,
+        scenarios,
+        subscriptions,
+        commuteScenarios: [], // TODO: Add commute scenarios state
+        mealCostData,
+        lastUpdated: new Date().toISOString(),
+      };
+      safeSetItem(STORAGE_KEY, state);
+    }, 500); // Debounce 500ms
+
+    return () => clearTimeout(timeoutId);
+  }, [inputs, scenarios, subscriptions, mealCostData, isHydrated]);
+
+  // Update functions
+  const updateIncome = useCallback((updates: Partial<IncomeInputs>) => {
+    setInputs((prev) => ({
+      ...prev,
+      income: { ...prev.income, ...updates },
+    }));
+  }, []);
+
+  const updateMoneyExpenses = useCallback(
+    (updates: Partial<MoneyExpenses>) => {
+      setInputs((prev) => ({
+        ...prev,
+        moneyExpenses: { ...prev.moneyExpenses, ...updates },
+      }));
+    },
+    []
+  );
+
+  const updateTimeExpenses = useCallback((updates: Partial<TimeExpenses>) => {
+    setInputs((prev) => ({
+      ...prev,
+      timeExpenses: { ...prev.timeExpenses, ...updates },
+    }));
+  }, []);
+
+  // Meal cost update functions
+  const updateMealCostData = useCallback(
+    (updates: Partial<MealCostData>) => {
+      setMealCostData((prev) => ({
+        ...prev,
+        ...updates,
+      }));
+    },
+    []
+  );
+
+  const updateEatingOut = useCallback((updates: Partial<EatingOutData>) => {
+    setMealCostData((prev) => ({
+      ...prev,
+      eatingOut: { ...prev.eatingOut, ...updates },
+    }));
+  }, []);
+
+  const updateHomeCooking = useCallback(
+    (updates: Partial<HomeCookingData>) => {
+      setMealCostData((prev) => ({
+        ...prev,
+        homeCooking: { ...prev.homeCooking, ...updates },
+      }));
+    },
+    []
+  );
+
+  // Scenario management
+  const saveCurrentAsScenario = useCallback(
+    (name: string) => {
+      if (!results) return;
+
+      // Max 3 scenarios
+      if (scenarios.length >= 3) {
+        console.warn('Maximum 3 scenarios allowed');
+        return;
+      }
+
+      const newScenario: Scenario = {
+        id: `scenario-${Date.now()}`,
+        name,
+        inputs: { ...inputs },
+        results: { ...results },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      setScenarios((prev) => [...prev, newScenario]);
+    },
+    [inputs, results, scenarios.length]
+  );
+
+  const deleteScenario = useCallback((id: string) => {
+    setScenarios((prev) => prev.filter((s) => s.id !== id));
+  }, []);
+
+  const loadScenario = useCallback(
+    (id: string) => {
+      const scenario = scenarios.find((s) => s.id === id);
+      if (scenario) {
+        setInputs(scenario.inputs);
+      }
+    },
+    [scenarios]
+  );
+
+  // Subscription management
+  const addSubscription = useCallback(
+    (subscription: Omit<Subscription, 'id'>) => {
+      const newSubscription: Subscription = {
+        ...subscription,
+        id: generateSubscriptionId(),
+      };
+      setSubscriptions((prev) => [...prev, newSubscription]);
+    },
+    []
+  );
+
+  const updateSubscription = useCallback(
+    (id: string, updates: Partial<Subscription>) => {
+      setSubscriptions((prev) =>
+        prev.map((sub) => (sub.id === id ? { ...sub, ...updates } : sub))
+      );
+    },
+    []
+  );
+
+  const deleteSubscription = useCallback((id: string) => {
+    setSubscriptions((prev) => prev.filter((sub) => sub.id !== id));
+  }, []);
+
+  const toggleSubscription = useCallback((id: string) => {
+    setSubscriptions((prev) =>
+      prev.map((sub) =>
+        sub.id === id ? { ...sub, isActive: !sub.isActive } : sub
+      )
+    );
+  }, []);
+
+  // Persistence functions
+  const saveToStorage = useCallback(() => {
+    const state: StoredState = {
+      version: STORAGE_VERSION,
+      currentInputs: inputs,
+      scenarios,
+      subscriptions,
+      commuteScenarios: [], // TODO: Add commute scenarios state
+      mealCostData,
+      lastUpdated: new Date().toISOString(),
+    };
+    safeSetItem(STORAGE_KEY, state);
+  }, [inputs, scenarios, subscriptions, mealCostData]);
+
+  const loadFromStorage = useCallback(() => {
+    const stored = safeGetItem<StoredState>(STORAGE_KEY);
+    if (stored && stored.version === STORAGE_VERSION) {
+      setInputs(stored.currentInputs);
+      setScenarios(stored.scenarios || []);
+      setSubscriptions(stored.subscriptions || []);
+      // Load mealCostData with fallback to defaults for backwards compatibility
+      if (stored.mealCostData) {
+        setMealCostData(stored.mealCostData);
+      }
+    }
+  }, []);
+
+  const exportDataHandler = useCallback(() => {
+    const state: StoredState = {
+      version: STORAGE_VERSION,
+      currentInputs: inputs,
+      scenarios,
+      subscriptions,
+      commuteScenarios: [], // TODO: Add commute scenarios state
+      mealCostData,
+      lastUpdated: new Date().toISOString(),
+    };
+
+    // Create JSON blob
+    const jsonString = JSON.stringify(state, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+
+    // Create download link
+    const url = URL.createObjectURL(blob);
+    const date = new Date().toISOString().split('T')[0];
+    const filename = `life-energy-calculator-${date}.json`;
+
+    // Trigger download
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
+
+    // Clean up
+    URL.revokeObjectURL(url);
+  }, [inputs, scenarios, subscriptions, mealCostData]);
+
+  const importDataHandler = useCallback(async (file: File) => {
+    return new Promise<void>((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        try {
+          // Parse JSON
+          const result = event.target?.result;
+          if (typeof result !== 'string') {
+            reject(new Error('Failed to read file contents'));
+            return;
+          }
+
+          const data = JSON.parse(result) as StoredState;
+
+          // Validate structure
+          if (!data.version || !data.currentInputs) {
+            reject(
+              new Error(
+                'Invalid file format. Please select a valid backup file.'
+              )
+            );
+            return;
+          }
+
+          // Check version compatibility
+          if (data.version !== STORAGE_VERSION) {
+            reject(
+              new Error(
+                'Incompatible file version. Please export your data again from the latest version.'
+              )
+            );
+            return;
+          }
+
+          // Load data
+          setInputs(data.currentInputs);
+          setScenarios(data.scenarios || []);
+          setSubscriptions(data.subscriptions || []);
+          // Load mealCostData with fallback to defaults for backwards compatibility
+          if (data.mealCostData) {
+            setMealCostData(data.mealCostData);
+          }
+
+          resolve();
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            reject(
+              new Error(
+                'Failed to parse file. The file may be corrupted or not a valid JSON file.'
+              )
+            );
+          } else if (error instanceof Error) {
+            reject(error);
+          } else {
+            reject(new Error('An unexpected error occurred while importing data'));
+          }
+        }
+      };
+
+      reader.onerror = () => {
+        reject(new Error('Failed to read file. Please try again.'));
+      };
+
+      // Read file as text
+      reader.readAsText(file);
+    });
+  }, []);
+
+  const resetAll = useCallback(() => {
+    setInputs(DEFAULT_INPUTS);
+    setScenarios([]);
+    setSubscriptions([]);
+    setMealCostData({
+      eatingOut: DEFAULT_EATING_OUT_DATA,
+      homeCooking: DEFAULT_HOME_COOKING_DATA,
+    });
+  }, []);
+
+  // Preset application
+  const applyPreset = useCallback(
+    (preset: Preset) => {
+      const updates: Partial<MoneyExpenses & TimeExpenses> = {};
+
+      // Apply preset values based on category
+      if (preset.category === 'commute' && preset.values.commute !== undefined) {
+        updates.commute = preset.values.commute;
+      }
+      if (
+        preset.category === 'clothing' &&
+        preset.values.clothing !== undefined
+      ) {
+        updates.clothing = preset.values.clothing;
+      }
+      if (preset.category === 'meals' && preset.values.meals !== undefined) {
+        updates.meals = preset.values.meals;
+      }
+
+      // Apply to money expenses (commute, clothing, meals are money expenses)
+      if (
+        updates.commute !== undefined ||
+        updates.clothing !== undefined ||
+        updates.meals !== undefined
+      ) {
+        updateMoneyExpenses(updates as Partial<MoneyExpenses>);
+      }
+    },
+    [updateMoneyExpenses]
+  );
+
+  const value: CalculatorContextType = {
+    inputs,
+    setInputs,
+    updateIncome,
+    updateMoneyExpenses,
+    updateTimeExpenses,
+    results,
+    scenarios,
+    saveCurrentAsScenario,
+    deleteScenario,
+    loadScenario,
+    subscriptions,
+    subscriptionSummary,
+    addSubscription,
+    updateSubscription,
+    deleteSubscription,
+    toggleSubscription,
+    mealCostData,
+    updateMealCostData,
+    updateEatingOut,
+    updateHomeCooking,
+    mealCostSummary,
+    saveToStorage,
+    loadFromStorage,
+    exportData: exportDataHandler,
+    importData: importDataHandler,
+    resetAll,
+    applyPreset,
+    isHydrated,
+  };
+
+  return (
+    <CalculatorContext.Provider value={value}>
+      {children}
+    </CalculatorContext.Provider>
+  );
+}
+
+/**
+ * Hook to use calculator context
+ *
+ * Must be used within a CalculatorProvider
+ *
+ * @throws Error if used outside CalculatorProvider
+ *
+ * @example
+ * ```tsx
+ * function MyComponent() {
+ *   const { inputs, updateIncome, results } = useCalculator();
+ *   return <div>Actual wage: ${results?.actualHourlyWage}</div>
+ * }
+ * ```
+ */
+export function useCalculator(): CalculatorContextType {
+  const context = useContext(CalculatorContext);
+  if (!context) {
+    throw new Error('useCalculator must be used within a CalculatorProvider');
+  }
+  return context;
+}

@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/eftirlaunahermir/layout,_N_T_/eftirlaunahermir/page,_N_T_/eftirlaunahermir"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/eftirlaunahermir/__PAGE__",
+    "/eftirlaunahermir",
+    "/_index",
+    "/_head"
+  ]
+}

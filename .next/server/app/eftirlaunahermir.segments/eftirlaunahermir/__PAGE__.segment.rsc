@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[23687,["/_next/static/chunks/90338593c01ee902.js","/_next/static/chunks/4beb115598c0dbe0.js","/_next/static/chunks/4e3a472e72031877.js","/_next/static/chunks/5aceac3ff42a29c6.js","/_next/static/chunks/739a07ab4c2eb6cb.js","/_next/static/chunks/173e60bae7afc2b3.js","/_next/static/chunks/9242af5a164b10e9.js","/_next/static/chunks/97dc6d189d853f63.js","/_next/static/chunks/1f13370cff52203c.js"],"EftirlaunahermirClient"]
+3:I[97367,["/_next/static/chunks/ff1a16fafef87110.js","/_next/static/chunks/a2dfb6fc5208ab9b.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"wCoR3Zf3JLvKYffqdujqM","rsc":["$","$1","c",{"children":[["$","$L2",null,{}],[["$","script","script-0",{"src":"/_next/static/chunks/5aceac3ff42a29c6.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/739a07ab4c2eb6cb.js","async":true}],["$","script","script-2",{"src":"/_next/static/chunks/173e60bae7afc2b3.js","async":true}],["$","script","script-3",{"src":"/_next/static/chunks/9242af5a164b10e9.js","async":true}],["$","script","script-4",{"src":"/_next/static/chunks/97dc6d189d853f63.js","async":true}],["$","script","script-5",{"src":"/_next/static/chunks/1f13370cff52203c.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null

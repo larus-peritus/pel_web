@@ -1,0 +1,68 @@
+[
+  {
+    "session_id": "78f13fe9-cc0d-4523-b6fa-055b33bf73d9",
+    "transcript_path": "/Users/larusperitus/.claude/projects/-Users-larusperitus-Documents-code-peritus-pel-web-2/78f13fe9-cc0d-4523-b6fa-055b33bf73d9.jsonl",
+    "cwd": "/Users/larusperitus/Documents/code/peritus/pel_web_2/apps/peninganaedalifid",
+    "permission_mode": "default",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/Users/larusperitus/Documents/code/peritus/pel_web_2/vercel.json",
+      "content": "{\n  \"$schema\": \"https://openapi.vercel.sh/vercel.json\",\n  \"buildCommand\": \"cd apps/peninganaedalifid && npm run build\",\n  \"installCommand\": \"cd apps/peninganaedalifid && npm install\",\n  \"framework\": \"nextjs\",\n  \"outputDirectory\": \"apps/peninganaedalifid/.next\"\n}\n"
+    },
+    "tool_use_id": "toolu_01PLofdq6THhfiM8h1qStHAX"
+  },
+  {
+    "session_id": "78f13fe9-cc0d-4523-b6fa-055b33bf73d9",
+    "transcript_path": "/Users/larusperitus/.claude/projects/-Users-larusperitus-Documents-code-peritus-pel-web-2/78f13fe9-cc0d-4523-b6fa-055b33bf73d9.jsonl",
+    "cwd": "/Users/larusperitus/Documents/code/peritus/pel_web_2/apps/peninganaedalifid",
+    "permission_mode": "default",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /Users/larusperitus/Documents/code/peritus/pel_web_2 && git add vercel.json && git status",
+      "description": "Stage the new vercel.json"
+    },
+    "tool_use_id": "toolu_01JpogykPuC28vM78eKj8PkQ"
+  },
+  {
+    "session_id": "78f13fe9-cc0d-4523-b6fa-055b33bf73d9",
+    "transcript_path": "/Users/larusperitus/.claude/projects/-Users-larusperitus-Documents-code-peritus-pel-web-2/78f13fe9-cc0d-4523-b6fa-055b33bf73d9.jsonl",
+    "cwd": "/Users/larusperitus/Documents/code/peritus/pel_web_2/apps/peninganaedalifid",
+    "permission_mode": "default",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/larusperitus/Documents/code/peritus/pel_web_2/apps/peninganaedalifid/package.json"
+    },
+    "tool_use_id": "toolu_015tTcKBqhpKqQmUpgX73N6E"
+  },
+  {
+    "session_id": "78f13fe9-cc0d-4523-b6fa-055b33bf73d9",
+    "transcript_path": "/Users/larusperitus/.claude/projects/-Users-larusperitus-Documents-code-peritus-pel-web-2/78f13fe9-cc0d-4523-b6fa-055b33bf73d9.jsonl",
+    "cwd": "/Users/larusperitus/Documents/code/peritus/pel_web_2/apps/peninganaedalifid",
+    "permission_mode": "default",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/larusperitus/Documents/code/peritus/pel_web_2/apps/peninganaedalifid/package.json",
+      "old_string": "\"build\": \"next build\",",
+      "new_string": "\"build\": \"TURBOPACK=0 next build\",",
+      "replace_all": false
+    },
+    "tool_use_id": "toolu_019CDnTUraiNkpYZecjs6Tdd"
+  },
+  {
+    "session_id": "78f13fe9-cc0d-4523-b6fa-055b33bf73d9",
+    "transcript_path": "/Users/larusperitus/.claude/projects/-Users-larusperitus-Documents-code-peritus-pel-web-2/78f13fe9-cc0d-4523-b6fa-055b33bf73d9.jsonl",
+    "cwd": "/Users/larusperitus/Documents/code/peritus/pel_web_2/apps/peninganaedalifid",
+    "permission_mode": "default",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /Users/larusperitus/Documents/code/peritus/pel_web_2 && git status",
+      "description": "Check git status"
+    },
+    "tool_use_id": "toolu_01Lw9FLooZfxup9seHSZXwGk"
+  }
+]
