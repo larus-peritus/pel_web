@@ -1,0 +1,7 @@
+{
+  "session_id": "78f13fe9-cc0d-4523-b6fa-055b33bf73d9",
+  "prompts": [
+    "/prime ",
+    "Im getting this error when deploying to vercel: Fix: Regenerate package-lock.json with SWC dependencies"
+  ]
+}
