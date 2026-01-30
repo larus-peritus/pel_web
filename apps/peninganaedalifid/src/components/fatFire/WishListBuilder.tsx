@@ -116,7 +116,7 @@ export function WishListBuilder() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold text-amber-900">
-              Óskarlisti{' '}
+              Óskalisti{' '}
               <Tooltip content={FATFIRE_TOOLTIPS.WISH_LIST_PRIORITY}>
                 <span className="text-xs text-gray-700">ℹ️</span>
               </Tooltip>
@@ -165,7 +165,7 @@ export function WishListBuilder() {
                           </button>
                         </div>
                         <p className="text-sm text-gray-600">
-                          {categoryConfig?.labelIs ?? 'Óskarlisti'}
+                          {categoryConfig?.labelIs ?? 'Óskalisti'}
                         </p>
                         {item.description && (
                           <p className="mt-1 text-sm text-gray-700">
@@ -377,7 +377,7 @@ export function WishListBuilder() {
             </div>
             <div className="border-t-2 border-amber-300 pt-2">
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-amber-900">Heildaróskarlisti:</span>
+                <span className="font-semibold text-amber-900">Heildaróskalisti:</span>
                 <span className="text-lg font-bold text-amber-900">
                   {formatCurrency(totalWishList)}/mán
                 </span>

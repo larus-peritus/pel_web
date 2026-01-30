@@ -206,6 +206,7 @@ export const DEFAULT_LIFEYRISSJODUR: LifeyrissjodurInput = {
 export const DEFAULT_SEREIGN: SereignInput = {
   currentBalance: 0,
   monthlyContribution: 0,
+  employeeContributionPercent: 0.04, // 4% (common employee contribution)
   employerMatchPercent: 0.02, // 2% (common employer match)
 };
 
@@ -330,6 +331,18 @@ export const FI_MULTIPLIER_OPTIONS = [
 ] as const;
 
 /**
+ * Typical employee contribution percentages in Iceland
+ * Used to calculate the employer match amount correctly
+ */
+export const EMPLOYEE_CONTRIBUTION_OPTIONS = [
+  { value: 0.02, label: '2%' },
+  { value: 0.04, label: '4% (algeng)' },
+  { value: 0.06, label: '6%' },
+  { value: 0.08, label: '8%' },
+  { value: 0.1, label: '10%' },
+] as const;
+
+/**
  * Typical employer match percentages in Iceland
  */
 export const EMPLOYER_MATCH_OPTIONS = [
@@ -354,7 +367,8 @@ export const TYPICAL_PENSION_SCENARIOS = {
     sereign: {
       currentBalance: 5_000_000, // Typical at age 35
       monthlyContribution: 10_000,
-      employerMatchPercent: 0.02,
+      employeeContributionPercent: 0.04, // 4% of salary
+      employerMatchPercent: 0.02, // 2% of salary
     },
     tr: {
       expectFullTR: true,
@@ -370,6 +384,7 @@ export const TYPICAL_PENSION_SCENARIOS = {
     sereign: {
       currentBalance: 0,
       monthlyContribution: 0,
+      employeeContributionPercent: 0.04, // 4% of salary (default)
       employerMatchPercent: 0,
     },
     tr: {
@@ -386,7 +401,8 @@ export const TYPICAL_PENSION_SCENARIOS = {
     sereign: {
       currentBalance: 10_000_000,
       monthlyContribution: 20_000,
-      employerMatchPercent: 0.04,
+      employeeContributionPercent: 0.04, // 4% of salary
+      employerMatchPercent: 0.04, // 4% employer match (generous)
     },
     tr: {
       expectFullTR: true,
@@ -542,3 +558,17 @@ export function getNumberOfPhases(retirementAge: number): number {
   if (retirementAge >= ICELANDIC_PENSION_SYSTEM.SEREIGN_ACCESS_AGE) return 2;
   return 3;
 }
+
+// ============================================================================
+// STORAGE
+// ============================================================================
+
+/**
+ * LocalStorage key for persisting Pension-Aware FIRE state
+ */
+export const STORAGE_KEY = 'pensionAwareFire_state' as const;
+
+/**
+ * State version for migrations
+ */
+export const STATE_VERSION = 1 as const;

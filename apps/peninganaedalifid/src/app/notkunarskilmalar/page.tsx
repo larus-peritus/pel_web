@@ -80,7 +80,21 @@ export default function TermsPage() {
             </p>
 
             <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-4">
-              7. Breytingar á skilmálum
+              7. Fréttabréf
+            </h2>
+            <p className="text-neutral-700 leading-relaxed">
+              Við bjóðum upp á fréttabréf sem inniheldur fræðsluefni um fjárhagslegt frelsi,
+              FIRE-ráð og upplýsingar um nýjar reiknivélar og eiginleika. Með því að skrá þig
+              á fréttabréfið samþykkir þú að fá tölvupósta frá okkur.
+            </p>
+            <p className="text-neutral-700 leading-relaxed">
+              Þú getur afskráð þig hvenær sem er með því að smella á afskráningartengil neðst
+              í hverju fréttabréfi. Við munum aldrei selja eða deila netfanginu þínu með
+              þriðju aðilum í markaðsskyni.
+            </p>
+
+            <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-4">
+              8. Breytingar á skilmálum
             </h2>
             <p className="text-neutral-700 leading-relaxed">
               Við áskiljum okkur rétt til að breyta þessum skilmálum hvenær sem er. Breytingar
@@ -88,7 +102,7 @@ export default function TermsPage() {
             </p>
 
             <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-4">
-              8. Samskipti
+              9. Samskipti
             </h2>
             <p className="text-neutral-700 leading-relaxed">
               Ef þú hefur spurningar um þessa skilmála, vinsamlegast hafðu samband við okkur

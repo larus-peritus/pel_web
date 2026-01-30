@@ -5,6 +5,21 @@
  * probability of success. Integrates withdrawal strategies and Icelandic pension system.
  */
 
+/**
+ * Generate a cryptographically secure random number in the range (0, 1)
+ *
+ * Uses Web Crypto API for better randomness than Math.random().
+ * Returns a value strictly between 0 and 1 (exclusive) to avoid
+ * Math.log(0) = -Infinity in the Box-Muller transform.
+ */
+function secureRandom(): number {
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  // Convert to (0, 1) range - never exactly 0 or 1
+  // Adding 1 and dividing by 2^32 + 1 ensures we're always in (0, 1)
+  return (array[0] + 1) / 0x100000001;
+}
+
 import type {
   RetirementSimulation,
   SimulationResults,
@@ -30,11 +45,13 @@ import {
  * Generate random return using lognormal distribution
  *
  * Markets tend to follow lognormal distribution (can't go below -100% but unbounded upside)
+ * Uses cryptographically secure random numbers for better simulation accuracy.
  */
 function generateRandomReturn(expectedReturn: number, volatility: number): number {
   // Box-Muller transform for normal distribution
-  const u1 = Math.random();
-  const u2 = Math.random();
+  // Using secureRandom() which returns values in (0, 1) - never 0, avoiding Math.log(0) = -Infinity
+  const u1 = secureRandom();
+  const u2 = secureRandom();
   const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
 
   // Convert to lognormal

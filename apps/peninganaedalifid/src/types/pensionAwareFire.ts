@@ -60,6 +60,9 @@ export interface SereignInput {
   /** Monthly contribution to séreign (ISK) */
   monthlyContribution: number;
 
+  /** Employee contribution percentage (decimal, e.g., 0.04 for 4%) */
+  employeeContributionPercent: number;
+
   /** Employer match percentage (decimal, e.g., 0.02 for 2%) */
   employerMatchPercent: number;
 }
@@ -232,6 +235,12 @@ export interface TREstimate {
 
   /** Lífeyrissjóður income above exemption threshold (ISK) */
   incomeAboveExemption: number;
+
+  /** Whether user receives full TR (no reduction) */
+  isFullTR: boolean;
+
+  /** Whether user receives zero TR (income too high) */
+  isZeroTR: boolean;
 }
 
 /**
@@ -376,3 +385,80 @@ export const PHASE_LABELS: Record<RetirementPhaseId, { nameIs: string; nameEn: s
  * localStorage key for pension-aware FIRE state
  */
 export const STORAGE_KEY = 'pensionAwareFire_state';
+
+// ============================================================================
+// GOAL GAP ANALYSIS TYPES
+// ============================================================================
+
+/**
+ * Savings projection to retirement age
+ * Shows whether current savings trajectory will meet gap phase requirements
+ */
+export interface SavingsProjection {
+  /** Projected total savings at retirement age (ISK) */
+  projectedAtRetirement: number;
+
+  /** Amount required for gap phase at retirement (ISK) */
+  requiredForGapPhase: number;
+
+  /** Whether projected savings meet or exceed requirements */
+  isOnTrack: boolean;
+
+  /** Shortfall amount if behind (0 if on track) (ISK) */
+  shortfall: number;
+
+  /** Surplus amount if ahead (0 if behind) (ISK) */
+  surplus: number;
+}
+
+/**
+ * Recommendations for closing a savings gap
+ * Three options: reduce expenses, increase savings, or lump sum
+ */
+export interface GapRecommendations {
+  /** Option A: Reduce monthly expenses */
+  expenseReduction: {
+    /** Monthly amount to reduce expenses by (ISK) */
+    monthlyAmount: number;
+    /** Percentage reduction required */
+    percentReduction: number;
+    /** New monthly expenses after reduction (ISK) */
+    newMonthlyExpenses: number;
+  };
+
+  /** Option B: Increase monthly savings */
+  additionalSavings: {
+    /** Additional monthly savings needed (ISK) */
+    monthlyAmount: number;
+    /** Percentage increase required */
+    percentIncrease: number;
+    /** New monthly savings after increase (ISK) */
+    newMonthlySavings: number;
+  };
+
+  /** Option C: Lump sum (e.g., from house sale) */
+  lumpSum: {
+    /** Amount needed as one-time contribution (ISK) */
+    amountNeeded: number;
+    /** Explanatory note about lump sum option */
+    note: string;
+  };
+}
+
+/**
+ * Complete goal gap analysis result
+ * Combines projection, recommendations, and context
+ */
+export interface GoalGapAnalysis {
+  /** Savings projection to retirement */
+  projection: SavingsProjection;
+
+  /** Recommendations if shortfall exists (null if on track) */
+  recommendations: GapRecommendations | null;
+
+  /** Years remaining until retirement */
+  yearsToRetirement: number;
+
+  /** Duration of gap phase in years */
+  gapPhaseDuration: number;
+}

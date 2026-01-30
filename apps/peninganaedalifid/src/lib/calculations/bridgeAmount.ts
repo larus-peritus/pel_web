@@ -372,11 +372,23 @@ export function calculateOptimalSereignWithdrawal(
   const months = 7 * 12; // 60-67 is 7 years = 84 months
   const monthlyReturn = expectedReturn / 12;
 
-  // Calculate PMT that depletes balance over 84 months with returns
-  // Using annuity formula: PMT = PV * (r * (1+r)^n) / ((1+r)^n - 1)
-  const factor = (monthlyReturn * Math.pow(1 + monthlyReturn, months)) /
-    (Math.pow(1 + monthlyReturn, months) - 1);
-  const monthlyWithdrawal = Math.round(sereignBalance * factor);
+  // @security Handle zero/near-zero return rate to prevent division by zero
+  // When return is ~0, simply divide balance evenly across months
+  let monthlyWithdrawal: number;
+  if (Math.abs(monthlyReturn) < 0.0000001) {
+    monthlyWithdrawal = Math.round(sereignBalance / months);
+  } else {
+    // Calculate PMT that depletes balance over 84 months with returns
+    // Using annuity formula: PMT = PV * (r * (1+r)^n) / ((1+r)^n - 1)
+    const factor = (monthlyReturn * Math.pow(1 + monthlyReturn, months)) /
+      (Math.pow(1 + monthlyReturn, months) - 1);
+    monthlyWithdrawal = Math.round(sereignBalance * factor);
+
+    // Validate result
+    if (!Number.isFinite(monthlyWithdrawal) || monthlyWithdrawal < 0) {
+      monthlyWithdrawal = Math.round(sereignBalance / months);
+    }
+  }
 
   const coversFullExpenses = monthlyWithdrawal >= monthlyExpenses;
   const monthsCovered = coversFullExpenses

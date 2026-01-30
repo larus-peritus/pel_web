@@ -21,7 +21,7 @@ export function Tooltip({
   const [isVisible, setIsVisible] = useState(false);
   const [tooltipId] = useState(() => `tooltip-${Math.random().toString(36).substr(2, 9)}`);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const tooltipRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef<HTMLSpanElement>(null);
 
   const showTooltip = () => {
     timeoutRef.current = setTimeout(() => {
@@ -62,7 +62,7 @@ export function Tooltip({
   };
 
   return (
-    <div
+    <span
       className="relative inline-block"
       onMouseEnter={showTooltip}
       onMouseLeave={hideTooltip}
@@ -70,17 +70,17 @@ export function Tooltip({
       onBlur={hideTooltip}
     >
       {/* Trigger element */}
-      <div
+      <span
         aria-describedby={isVisible ? tooltipId : undefined}
         tabIndex={0}
         className="inline-block"
       >
         {children}
-      </div>
+      </span>
 
       {/* Tooltip */}
       {isVisible && (
-        <div
+        <span
           ref={tooltipRef}
           id={tooltipId}
           role="tooltip"
@@ -96,7 +96,7 @@ export function Tooltip({
         >
           {content}
           {/* Arrow */}
-          <div
+          <span
             className={cn(
               'absolute w-0 h-0',
               'border-4',
@@ -104,8 +104,8 @@ export function Tooltip({
             )}
             aria-hidden="true"
           />
-        </div>
+        </span>
       )}
-    </div>
+    </span>
   );
 }

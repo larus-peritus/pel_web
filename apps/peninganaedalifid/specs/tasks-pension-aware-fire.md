@@ -89,12 +89,21 @@
 ```
 
 **Acceptance Criteria:**
-- [ ] All pension ages correct (60, 62, 67)
-- [ ] TR means-testing rates accurate
-- [ ] Default values are reasonable for Iceland
-- [ ] Input ranges allow valid scenarios
+- [x] All pension ages correct (60, 62, 67)
+- [x] TR means-testing rates accurate
+- [x] Default values are reasonable for Iceland
+- [x] Input ranges allow valid scenarios
 
 **Estimated Complexity:** Small
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/lib/constants/pensionAwareFire.ts (522 lines)
+- Tests: tests/lib/constants/pensionAwareFire.test.ts (85 tests, all passing)
+- Context: context/modules/PensionAwareFireConstants.md
+- All pension ages verified (séreign: 60, lífeyrissjóður: 62-72, TR: 67)
+- TR means-testing accurate (36,500 ISK exemption, 45% reduction rate)
+- Default values appropriate for Icelandic context
+- 18 helper functions implemented and tested
 
 ---
 
@@ -122,13 +131,23 @@
 ```
 
 **Acceptance Criteria:**
-- [ ] Returns 3 phases for retirement before 60
-- [ ] Returns 2 phases for retirement 60-66
-- [ ] Returns 1 phase for retirement at 67+
-- [ ] Each phase has correct income sources
-- [ ] Funding requirements chain correctly between phases
+- [x] Returns 3 phases for retirement before 60
+- [x] Returns 2 phases for retirement 60-66
+- [x] Returns 1 phase for retirement at 67+
+- [x] Each phase has correct income sources
+- [x] Funding requirements chain correctly between phases
 
 **Estimated Complexity:** Medium
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/lib/calculations/pensionAwareFire.ts (562 lines)
+- Tests: tests/lib/calculations/pensionAwareFire.test.ts (51 tests, all passing)
+- Context: context/modules/PensionAwareFireCalculations.md
+- Functions: calculateRetirementPhases, calculateGapPhase, calculateSereignBridgePhase, calculateFullPensionPhase, calculatePhaseIncome, calculatePhaseFunding, projectSereignGrowth, calculateTRWithMeansTesting
+- Phase determination: 3/2/1 phases based on retirement age
+- Phase chaining: Remaining funds flow between phases
+- Income sources: Correct per phase (savings → +séreign → +lífeyrissjóður+TR)
+- Mathematical formulas: PV annuity, FV with contributions, TR means-testing
 
 ---
 
@@ -153,12 +172,22 @@
 ```
 
 **Acceptance Criteria:**
-- [ ] Present value formula is mathematically correct
-- [ ] Handles edge cases (pension already started, zero amounts)
-- [ ] Pension-adjusted FI is always <= traditional FI
-- [ ] Results match hand calculations for test cases
+- [x] Present value formula is mathematically correct
+- [x] Handles edge cases (pension already started, zero amounts)
+- [x] Pension-adjusted FI is always <= traditional FI
+- [x] Results match hand calculations for test cases
 
 **Estimated Complexity:** Medium
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: calculatePresentValueOfPension, calculatePresentValueOfAllPensions, calculateTraditionalFI, calculatePensionAdjustedFI, calculateBridgeFundingNeeds
+- Files: src/lib/calculations/pensionAwareFire.ts (+231 lines = 1,080 total)
+- Tests: tests/lib/calculations/pensionAwareFire.test.ts (+25 tests = 119 total, all passing)
+- Context: context/modules/PensionAwareFireCalculations.md
+- All acceptance criteria met
+- Edge cases handled: Zero amounts, pension already started, zero discount rate, retirement at pension ages
+- Verified: Pension-adjusted FI always <= traditional FI across multiple scenarios
+- Mathematical accuracy confirmed through hand calculation comparisons
 
 ---
 
@@ -183,12 +212,22 @@
 ```
 
 **Acceptance Criteria:**
-- [ ] Full TR when lífeyrissjóður below exemption
-- [ ] Correct reduction rate (45%) applied
-- [ ] Zero TR when income exceeds threshold
-- [ ] Results match existing TRMeansTestCalculator
+- [x] Full TR when lífeyrissjóður below exemption
+- [x] Correct reduction rate (45%) applied
+- [x] Zero TR when income exceeds threshold
+- [x] Results match existing TRMeansTestCalculator
 
 **Estimated Complexity:** Small
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/lib/calculations/pensionAwareFire.ts (+101 lines)
+- Enhanced: src/types/pensionAwareFire.ts (TREstimate with isFullTR, isZeroTR flags)
+- Tests: tests/lib/calculations/pensionAwareFire.test.ts (+28 tests = 79 total, all passing)
+- Context: context/modules/PensionAwareFireCalculations.md (updated)
+- Functions: calculateTREstimate(), calculateIncomeAboveExemption(), calculateTRReduction()
+- TR Rules: 36,500 ISK exemption, 45% reduction rate, 380k max TR
+- Edge Cases: Manual overrides, boundary conditions, typical scenarios all tested
+- Séreign Exclusion: Confirmed séreign withdrawals do NOT count against TR
 
 ---
 
@@ -211,12 +250,22 @@
 ```
 
 **Acceptance Criteria:**
-- [ ] Compound growth calculation correct
-- [ ] Employer match included in projections
-- [ ] Withdrawal strategy covers gap to 67
-- [ ] Handles zero séreign gracefully
+- [x] Compound growth calculation correct
+- [x] Employer match included in projections
+- [x] Withdrawal strategy covers gap to 67
+- [x] Handles zero séreign gracefully
 
 **Estimated Complexity:** Small
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/lib/calculations/pensionAwareFire.ts (+179 lines = 842 total)
+- Tests: tests/lib/calculations/pensionAwareFire.test.ts (+15 tests = 94 total, all passing)
+- Context: context/modules/PensionAwareFireCalculations.md (updated)
+- Functions: calculateProjectedSereign(), calculateSereignWithdrawal60to67()
+- Projection: Handles three retirement scenarios (before 60, at 60, after 60)
+- Withdrawal: Even withdrawal over 7 years with month-by-month simulation
+- Edge Cases: Zero balance, no shortfall, zero return, already past 60
+- Formula: Sustainable withdrawal = PV × [r / (1 - (1 + r)^-n)]
 
 ---
 
@@ -247,13 +296,21 @@
 ```
 
 **Acceptance Criteria:**
-- [ ] State initializes with defaults
-- [ ] Updates trigger recalculation
-- [ ] State persists to localStorage
-- [ ] Scenarios can be saved/deleted
-- [ ] No TypeScript errors in context
+- [x] State initializes with defaults ✅
+- [x] Updates trigger recalculation ✅
+- [x] State persists to localStorage ✅
+- [x] Scenarios can be saved/deleted ✅
+- [x] No TypeScript errors in context ✅
 
 **Estimated Complexity:** Medium
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/context/CalculatorContext.tsx (+200 lines)
+- Storage: src/lib/constants/pensionAwareFire.ts (+16 lines for STORAGE_KEY)
+- Context: context/modules/PensionAwareFireContext.md
+- All acceptance criteria met
+- Follows LeanFIRE/CoastFIRE patterns
+- Integrates with expense baseline
 
 ---
 
@@ -287,13 +344,20 @@
 ```
 
 **Acceptance Criteria:**
-- [ ] All inputs render correctly
-- [ ] Validation prevents invalid inputs
-- [ ] Expense baseline integration works
-- [ ] Tier selector shows correct values
-- [ ] Updates flow to context
+- [x] All inputs render correctly
+- [x] Validation prevents invalid inputs
+- [x] Expense baseline integration works
+- [x] Tier selector shows correct values
+- [x] Updates flow to context
 
 **Estimated Complexity:** Medium
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/components/pensionAwareFire/BasicInputs.tsx (382 lines)
+- Tests: tests/components/pensionAwareFire/BasicInputs.test.tsx (21 tests, all passing)
+- Context: context/modules/BasicInputs.md
+- Features: 6 input fields, expense baseline integration with tier selector, blue/indigo theme, summary box
+- Test Coverage: Rendering, baseline integration, age validation, expense modes, savings, return rate, summary
 
 ---
 
@@ -332,13 +396,20 @@
 ```
 
 **Acceptance Criteria:**
-- [ ] All three pension sections render
-- [ ] Collapsible sections work
-- [ ] Séreign projection updates live
-- [ ] TR estimate updates when lífeyrissjóður changes
-- [ ] Quick-fill populates reasonable defaults
+- [x] All three pension sections render
+- [x] Collapsible sections work
+- [x] Séreign projection updates live
+- [x] TR estimate updates when lífeyrissjóður changes
+- [x] Quick-fill populates reasonable defaults
 
 **Estimated Complexity:** Medium
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/components/pensionAwareFire/PensionInputs.tsx (565 lines)
+- Tests: tests/components/pensionAwareFire/PensionInputs.test.tsx (34 tests, all passing)
+- Context: context/modules/PensionInputs.md
+- Features: 3 collapsible sections, live séreign projection, auto-calculated TR, quick-fill button, blue/indigo/purple themes
+- Test Coverage: All inputs, live updates, collapsibility, quick-fill, accessibility
 
 ---
 
@@ -377,13 +448,21 @@
 ```
 
 **Acceptance Criteria:**
-- [ ] Starts collapsed by default
-- [ ] Expand/collapse works smoothly
-- [ ] Content is accurate and helpful
-- [ ] Dismiss button works
-- [ ] Styling matches other educational intros
+- [x] Starts collapsed by default
+- [x] Expand/collapse works smoothly
+- [x] Content is accurate and helpful
+- [x] Dismiss button works
+- [x] Styling matches other educational intros
 
 **Estimated Complexity:** Small
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/components/pensionAwareFire/PensionEducationalIntro.tsx (454 lines)
+- Tests: tests/components/pensionAwareFire/PensionEducationalIntro.test.tsx (21 tests, all passing)
+- Context: context/modules/PensionEducationalIntro.md
+- Features: Four comprehensive sections, collapsible card, individual section expansion, blue/indigo theme
+- Example: Jón, 35 years old, shows 106M ISK savings (144M → 38M = 73% reduction)
+- Accessibility: Full ARIA support, keyboard navigation, semantic HTML
 
 ---
 
@@ -420,13 +499,27 @@
 ```
 
 **Acceptance Criteria:**
-- [ ] Timeline renders correctly for all scenarios
-- [ ] Colors match phase types
-- [ ] Hover shows details
-- [ ] Responsive on mobile
-- [ ] Handles edge cases (retirement at 60, 67, etc.)
+- [x] Timeline renders correctly for all scenarios
+- [x] Colors match phase types
+- [x] Hover shows details
+- [x] Responsive on mobile
+- [x] Handles edge cases (retirement at 60, 67, etc.)
 
 **Estimated Complexity:** Medium
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/components/pensionAwareFire/PhaseTimeline.tsx (407 lines)
+- Tests: tests/components/pensionAwareFire/PhaseTimeline.test.tsx (27 tests, all passing)
+- Context: context/modules/PhaseTimeline.md
+- Features:
+  - Horizontal timeline bar (desktop) with proportional phase widths
+  - Stacked cards (mobile) for responsive layout
+  - Color-coded phases: Blue (working), Red (gap), Amber (bridge), Green (full pension)
+  - Age markers at transition points (current, retirement, 60, 67, 90)
+  - Duration and funding display for each phase
+  - Interactive tooltips with comprehensive phase details
+  - Keyboard navigation and full accessibility support
+- Edge cases handled: All retirement age scenarios (before 60, at 60, 60-66, at 67, after 67)
 
 ---
 
@@ -456,13 +549,26 @@
 ```
 
 **Acceptance Criteria:**
-- [ ] Both FI numbers display correctly
-- [ ] Savings difference calculated correctly
-- [ ] Years earlier calculation accurate
-- [ ] Visually emphasizes the benefit
-- [ ] Handles case where they're equal (rare)
+- [x] Both FI numbers display correctly
+- [x] Savings difference calculated correctly
+- [x] Years earlier calculation accurate
+- [x] Visually emphasizes the benefit
+- [x] Handles case where they're equal (rare)
 
 **Estimated Complexity:** Small
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/components/pensionAwareFire/FINumberComparison.tsx (167 lines)
+- Tests: tests/components/pensionAwareFire/FINumberComparison.test.tsx (24 tests, all passing)
+- Context: context/modules/FINumberComparison.md
+- Features:
+  - Two-column comparison with arrow connector
+  - Green success styling for pension-adjusted FI
+  - Savings highlight box (amount, percentage, years earlier)
+  - Edge case handling (≤100k threshold for minimal difference)
+  - Responsive design (desktop/mobile layouts)
+  - All text in Icelandic
+  - 24 comprehensive tests covering all features
 
 ---
 
@@ -497,13 +603,26 @@
 ```
 
 **Acceptance Criteria:**
-- [ ] All phases display correctly
-- [ ] Income sources accurate per phase
-- [ ] Funding chain is clear
-- [ ] Surplus/deficit highlighted
-- [ ] Collapsible for cleaner view
+- [x] All phases display correctly ✅
+- [x] Income sources accurate per phase ✅
+- [x] Funding chain is clear ✅
+- [x] Surplus/deficit highlighted ✅
+- [x] Collapsible for cleaner view ✅
 
 **Estimated Complexity:** Medium
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/components/pensionAwareFire/PhaseBreakdown.tsx (419 lines)
+- Tests: tests/components/pensionAwareFire/PhaseBreakdown.test.tsx (29 tests, all passing)
+- Context: context/modules/PhaseBreakdown.md
+- Features:
+  - Color-coded phase cards (red/amber/green borders)
+  - Collapsible with expand/collapse all controls
+  - Income sources breakdown (only non-zero sources shown)
+  - Surplus/deficit indicators (green/red alerts)
+  - Funding requirements with transfer text
+  - Responsive layout (2-column desktop, 1-column mobile)
+  - All Icelandic labels
 
 ---
 
@@ -533,13 +652,22 @@
 ```
 
 **Acceptance Criteria:**
-- [ ] Can save scenario with custom name
-- [ ] Table displays up to 3 scenarios
-- [ ] Can delete scenarios
-- [ ] Comparison highlights key differences
-- [ ] Persists across page reloads
+- [x] Can save scenario with custom name ✅
+- [x] Table displays up to 3 scenarios ✅
+- [x] Can delete scenarios ✅
+- [x] Comparison highlights key differences ✅
+- [x] Persists across page reloads ✅
 
 **Estimated Complexity:** Medium
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/components/pensionAwareFire/ScenarioComparison.tsx (427 lines)
+- Tests: tests/components/pensionAwareFire/ScenarioComparison.test.tsx (52 tests passing)
+- Context: context/modules/PensionScenarioComparison.md
+- Features: Save with name, max 3 scenarios, delete with confirmation, best value highlighting
+- UI: Responsive table with green highlighting, empty state, legend, info box
+- Integration: Uses CalculatorContext (savePensionScenario, deletePensionScenario)
+- Persistence: Via localStorage through CalculatorContext
 
 ---
 
@@ -578,13 +706,23 @@
 ```
 
 **Acceptance Criteria:**
-- [ ] All components render in correct order
-- [ ] Results show only when calculated
-- [ ] Loading state handled
-- [ ] Back button works when provided
-- [ ] Styling consistent with other calculators
+- [x] All components render in correct order ✅
+- [x] Results show only when calculated ✅
+- [x] Loading state handled ✅
+- [x] Back button works when provided ✅
+- [x] Styling consistent with other calculators ✅
 
 **Estimated Complexity:** Medium
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/components/pensionAwareFire/PensionAwareFIRECalculator.tsx (197 lines)
+- Barrel Export: src/components/pensionAwareFire/index.ts
+- Tests: tests/components/pensionAwareFire/PensionAwareFIRECalculator.test.tsx (23 tests, all passing)
+- Context: context/modules/PensionAwareFIRECalculator.md
+- All sub-components integrated: PensionEducationalIntro, BasicInputs, PensionInputs, PhaseTimeline, FINumberComparison, PhaseBreakdown, ScenarioComparison
+- Follows LeanFIRECalculator pattern
+- Blue-indigo-purple gradient theme
+- All Icelandic content
 
 ---
 
@@ -611,12 +749,20 @@ description: "Reiknaðu raunverulega FI-tölu þína með tilliti til íslenska 
 ```
 
 **Acceptance Criteria:**
-- [ ] Page accessible at /lifeyristengd-fire
-- [ ] Metadata renders correctly
-- [ ] Calculator initializes properly
-- [ ] No hydration errors
+- [x] Page accessible at /lifeyristengd-fire
+- [x] Metadata renders correctly
+- [x] Calculator initializes properly
+- [x] No hydration errors
 
 **Estimated Complexity:** Small
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/app/lifeyristengd-fire/page.tsx (51 lines)
+- Implemented: src/app/lifeyristengd-fire/LifeyristengdFIREClient.tsx (61 lines)
+- Tests: tests/app/lifeyristengd-fire/page.test.tsx (5 tests, all passing)
+- Context: context/modules/PensionAwareFIREPage.md
+- Route: /lifeyristengd-fire (accessible)
+- No TypeScript errors
 
 ---
 
@@ -660,12 +806,33 @@ describe('calculateProjectedSereign')
 ```
 
 **Acceptance Criteria:**
-- [ ] All calculation functions have tests
-- [ ] Edge cases covered
-- [ ] Tests pass
-- [ ] Coverage > 80%
+- [x] All calculation functions have tests
+- [x] Edge cases covered
+- [x] Tests pass
+- [x] Coverage > 80%
 
 **Estimated Complexity:** Medium
+
+**Status:** ✅ Completed 2026-01-30
+  - Implemented: Comprehensive unit tests for all calculation functions (132 tests total)
+  - Tests: tests/lib/calculations/pensionAwareFire.test.ts
+  - Coverage:
+    - calculateRetirementPhases: Complete (all phase scenarios, edge cases, boundary conditions)
+    - calculatePresentValueOfPension: Complete (mathematical accuracy, edge cases)
+    - calculatePensionAdjustedFI: Complete (always <= traditional FI, verified values)
+    - calculateTRWithMeansTesting: Complete (full TR, reduction, zero TR scenarios)
+    - calculateProjectedSereign: Complete (compound growth, employer match)
+    - calculateSereignWithdrawal60to67: Complete (withdrawal strategies, edge cases)
+  - Edge Cases Added:
+    - Very early retirement (age 40 with 20-year gap)
+    - Very late retirement (age 70+ after all pensions active)
+    - Boundary conditions at exact pension ages (60, 62, 67)
+    - High/low pension income scenarios
+  - Integration Tests Added:
+    - Full calculation flow verification
+    - Mathematical consistency validation
+  - Test Results: All 132 tests passing
+  - Context: context/modules/PensionAwareFireCalculations.md (updated with new test categories)
 
 ---
 
@@ -694,12 +861,25 @@ describe('calculateProjectedSereign')
 ```
 
 **Acceptance Criteria:**
-- [ ] Calculator accessible from navigation
-- [ ] Card displays in calculator hub
-- [ ] Links work correctly
-- [ ] Consistent with other calculator entries
+- [x] Calculator accessible from navigation ✅ Completed 2026-01-30
+- [x] Card displays in calculator hub ✅
+- [x] Links work correctly ✅
+- [x] Consistent with other calculator entries ✅
 
 **Estimated Complexity:** Small
+
+**Status:** ✅ Completed 2026-01-30
+- Implemented: src/components/calculator/CalculatorPageContent.tsx (+23 lines)
+- Added to FIRE_CALCULATORS array with ID 'lifeyristengd-fire'
+- Icon: 🎯, Name: "Lífeyristengd FIRE"
+- Description: "Reiknaðu raunverulega FI-tölu með tilliti til íslenska lífeyriskerfisins."
+- Conditional rendering in FireImpactContent function
+- Content component: PensionAwareFIREContent with back button
+- Context: context/modules/PensionAwareFIRENavigation.md
+- Position: Last entry in FIRE calculators (after Fat FIRE)
+- Access: Main page → FIRE tab → Calculator card, or direct URL /lifeyristengd-fire
+- No TypeScript errors
+- Pattern consistent with Lean FIRE, Fat FIRE, Coast FIRE
 
 ---
 

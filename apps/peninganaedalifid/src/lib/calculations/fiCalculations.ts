@@ -55,7 +55,19 @@ export function calculateYearsToFI(
   //   PMT = annual savings
   //   r = return rate
   const remainingNeeded = fiNumber - currentPortfolio;
+
+  // @security Handle zero/near-zero return rate to prevent division by zero
+  // When r ≈ 0, use simple linear calculation: years = remaining / savings
+  if (Math.abs(r) < 0.0001) {
+    return remainingNeeded / annualSavings;
+  }
+
   const years = Math.log((remainingNeeded * r) / annualSavings + 1) / Math.log(1 + r);
+
+  // @security Validate result - return Infinity for invalid calculations
+  if (!Number.isFinite(years) || years < 0) {
+    return Infinity;
+  }
 
   return years;
 }

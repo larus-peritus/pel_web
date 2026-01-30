@@ -159,12 +159,12 @@ export function AssumptionsControls() {
                 <p className="text-xs text-neutral-700">
                   <strong>Hvað er þetta?</strong> Hlutfall FI-tölunnar sem þú getur tekið
                   út á ári án þess að tæma sparnaðinn. 4% úttektarhlutfall þýðir að þú
-                  þarft 25x árlega útgjöld (100 ÷ 4 = 25).
+                  þarft 25x árleg útgjöld (100 ÷ 4 = 25).
                 </p>
                 <p className="mt-2 text-xs text-neutral-600">
                   <strong>Dæmi:</strong> Með {(withdrawalRate * 100).toFixed(1)}%
                   úttektarhlutfall þarftu{' '}
-                  {(1 / withdrawalRate).toFixed(1)}x árlega útgjöld þín.
+                  {(1 / withdrawalRate).toFixed(1)}x árleg útgjöld þín.
                 </p>
               </div>
               {getFieldWarning('withdrawalRate') && (

@@ -175,6 +175,12 @@ export function calculateSnowball(input: SnowballInput): SnowballResults {
 
   let month = 0;
 
+  // @security Negative amortization detection
+  // Track consecutive months where balance grows to detect and exit early
+  let prevBaseBalance = baseBalance;
+  let negativeAmortizationCount = 0;
+  const MAX_NEGATIVE_AMORTIZATION_MONTHS = 12; // Exit if balance grows for 1 year straight
+
   // Continue until all scenarios are paid off
   while (
     (baseBalance > MIN_BALANCE_THRESHOLD ||
@@ -359,6 +365,20 @@ export function calculateSnowball(input: SnowballInput): SnowballResults {
     baseBalance = baseNewBalance;
     snowballLoanBalance = snowballLoanNewBalance;
     snowballInvestBalance = snowballInvestNewBalance;
+
+    // @security Detect negative amortization (balance growing instead of shrinking)
+    // This prevents the loop from running 600 iterations when loan is unpayable
+    if (baseBalance > MIN_BALANCE_THRESHOLD && baseBalance >= prevBaseBalance) {
+      negativeAmortizationCount++;
+      if (negativeAmortizationCount >= MAX_NEGATIVE_AMORTIZATION_MONTHS) {
+        // Balance has been growing for a full year - exit early
+        // The loan parameters result in negative amortization
+        break;
+      }
+    } else {
+      negativeAmortizationCount = 0; // Reset counter if balance decreased
+    }
+    prevBaseBalance = baseBalance;
 
     // Advance to next month for day count calculation
     currentMonth++;

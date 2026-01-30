@@ -13,3 +13,4 @@ export { ExpenseBreakdownChart } from './ExpenseBreakdownChart';
 export { MilestoneTracker } from './MilestoneTracker';
 export { TimelineProjection } from './TimelineProjection';
 export { FatFIRECard } from './FatFIRECard';
+export { EducationalIntro } from './EducationalIntro';

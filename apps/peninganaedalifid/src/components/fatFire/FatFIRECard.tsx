@@ -101,7 +101,7 @@ export function FatFIRECard() {
                   </p>
                 </div>
                 <div className="rounded bg-white p-2">
-                  <p className="text-gray-600">Óskarlisti</p>
+                  <p className="text-gray-600">Óskalisti</p>
                   <p className="font-semibold text-gray-900">
                     {fatFireState?.wishListItems.length ?? 0} atriði
                   </p>
@@ -142,7 +142,7 @@ export function FatFIRECard() {
             </div>
             <div className="flex items-center gap-2">
               <span>✓</span>
-              <span>Óskarlisti fyrir draumalífsstíl</span>
+              <span>Óskalisti fyrir draumalífsstíl</span>
             </div>
             <div className="flex items-center gap-2">
               <span>✓</span>

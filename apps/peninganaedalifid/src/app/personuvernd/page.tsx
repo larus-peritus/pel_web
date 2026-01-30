@@ -85,15 +85,40 @@ export default function PrivacyPage() {
             </p>
 
             <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-4">
-              6. Þriðju aðilar
+              6. Fréttabréf
             </h2>
             <p className="text-neutral-700 leading-relaxed">
-              Við deilum engum upplýsingum með þriðju aðilum þar sem við söfnum engum persónuupplýsingum.
-              Auglýsendur á síðunni fá engar upplýsingar um notendur frá okkur.
+              Ef þú skráir þig á fréttabréfið okkar söfnum við netfanginu þínu. Þetta er eina
+              persónuupplýsingin sem við söfnum og hún er notuð eingöngu til að senda þér fréttabréfið.
+            </p>
+            <p className="text-neutral-700 leading-relaxed">
+              Við notum <strong>Buttondown</strong> til að senda fréttabréfið. Buttondown geymir netfangið þitt
+              á öruggan hátt og uppfyllir alþjóðlegar persónuverndarreglur (GDPR). Þú getur lesið{' '}
+              <a
+                href="https://buttondown.com/legal/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-600 hover:underline"
+              >
+                persónuverndarstefnu Buttondown
+              </a>{' '}
+              fyrir frekari upplýsingar.
+            </p>
+            <p className="text-neutral-700 leading-relaxed">
+              Þú getur afskráð þig af fréttabréfinu hvenær sem er með því að smella á afskráningartengil
+              neðst í hverju fréttabréfi. Við eyðum netfanginu þínu úr listanum um leið og þú afskráir þig.
             </p>
 
             <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-4">
-              7. Öryggi
+              7. Þriðju aðilar
+            </h2>
+            <p className="text-neutral-700 leading-relaxed">
+              Við deilum engum upplýsingum með þriðju aðilum að undanskildu netfangi áskrifenda fréttabréfs
+              sem er geymt hjá Buttondown (sjá kafla 6). Auglýsendur á síðunni fá engar upplýsingar um notendur frá okkur.
+            </p>
+
+            <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-4">
+              8. Öryggi
             </h2>
             <p className="text-neutral-700 leading-relaxed">
               Þar sem öll gögn eru geymd staðbundið í vafranum þínum, þá er öryggi þeirra háð
@@ -102,16 +127,16 @@ export default function PrivacyPage() {
             </p>
 
             <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-4">
-              8. Réttindi þín
+              9. Réttindi þín
             </h2>
             <p className="text-neutral-700 leading-relaxed">
-              Þar sem við geymum engar upplýsingar um þig, þá þarftu ekki að óska eftir aðgangi
-              að eða eyðingu gagna. Þú hefur fulla stjórn á öllum gögnum í localStorage vafrans
-              þíns.
+              Þú hefur fulla stjórn á öllum gögnum í localStorage vafrans þíns. Ef þú ert skráður
+              á fréttabréfið geturðu afskráð þig hvenær sem er og við eyðum þá netfanginu þínu.
+              Þú getur einnig haft samband við okkur til að óska eftir eyðingu netfangsins.
             </p>
 
             <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-4">
-              9. Breytingar á stefnu
+              10. Breytingar á stefnu
             </h2>
             <p className="text-neutral-700 leading-relaxed">
               Ef við breytum þessari persónuverndarstefnu munum við uppfæra þessa síðu.
@@ -119,7 +144,7 @@ export default function PrivacyPage() {
             </p>
 
             <h2 className="text-xl font-semibold text-neutral-900 mt-8 mb-4">
-              10. Samskipti
+              11. Samskipti
             </h2>
             <p className="text-neutral-700 leading-relaxed">
               Ef þú hefur spurningar um persónuvernd, vinsamlegast hafðu samband við okkur

@@ -55,6 +55,7 @@ import { BaristaFIRECalculator } from '@/components/baristaFire';
 import { RetirementSimulatorCalculator } from '@/components/retirementSimulator';
 import { LeanFIRECalculator } from '@/components/leanFire';
 import { FatFIRECalculator } from '@/components/fatFire';
+import { PensionAwareFIRECalculator } from '@/components/pensionAwareFire';
 
 // Helper to create calculator tabs with dynamic values
 function createCalculatorTabs(
@@ -387,6 +388,13 @@ const FIRE_CALCULATORS: FireCalculator[] = [
     name: 'Lúxus FIRE',
     description: 'FatFIRE - skipulagðu eftirlaunin með rýmri útgjaldamörkum og lúxus.',
     icon: '💎',
+    available: true,
+  },
+  {
+    id: 'lifeyristengd-fire',
+    name: 'Lífeyristengd FIRE',
+    description: 'Reiknaðu raunverulega FI-tölu með tilliti til íslenska lífeyriskerfisins.',
+    icon: '🎯',
     available: true,
   },
 ];
@@ -1209,6 +1217,13 @@ function FireImpactContent({
     );
   }
 
+  // If Pension-Aware FIRE is selected, show it
+  if (selectedCalculator === 'lifeyristengd-fire') {
+    return (
+      <PensionAwareFIREContent onBack={() => onSelectCalculator(null)} />
+    );
+  }
+
   // Otherwise show the calculator selection hub
   return (
     <>
@@ -1453,6 +1468,18 @@ interface FatFireContentProps {
 
 function FatFireContent({ onBack }: FatFireContentProps) {
   return <FatFIRECalculator onBack={onBack} />;
+}
+
+/**
+ * Pension-Aware FIRE Content
+ * Task 8.2 - Pension-Aware FIRE Calculator
+ */
+interface PensionAwareFIREContentProps {
+  onBack: () => void;
+}
+
+function PensionAwareFIREContent({ onBack }: PensionAwareFIREContentProps) {
+  return <PensionAwareFIRECalculator onBack={onBack} />;
 }
 
 /**

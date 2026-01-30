@@ -56,6 +56,12 @@ import {
 import { DEFAULT_INPUTS, STORAGE_KEY, STORAGE_VERSION } from '@/lib/defaults';
 import { calculateResults } from '@/lib/calculations';
 import { safeGetItem, safeSetItem } from '@/lib/storage/localStorage';
+import {
+  sanitizeIncomeInputs,
+  sanitizeMoneyExpenses,
+  sanitizeTimeExpenses,
+  sanitizeNumericObject,
+} from '@/lib/validation/numeric';
 import type {
   ChildcareItem,
   ChildcareSummary,
@@ -174,6 +180,25 @@ import type {
   ExpenseInput,
   IcelandicPensionInput,
 } from '@/types/retirementSimulator';
+import type {
+  PensionAwareFireState,
+  PensionAwareFireResults,
+  SavedScenario,
+} from '@/types/pensionAwareFire';
+import {
+  calculateRetirementPhases,
+  calculatePensionAdjustedFI,
+  calculateTraditionalFI,
+  calculateProjectedSereign,
+  calculateTREstimate,
+} from '@/lib/calculations/pensionAwareFire';
+import {
+  PENSION_AWARE_DEFAULTS,
+  DEFAULT_LIFEYRISSJODUR,
+  DEFAULT_SEREIGN,
+  DEFAULT_TR,
+  STORAGE_KEY as PENSION_AWARE_STORAGE_KEY,
+} from '@/lib/constants/pensionAwareFire';
 
 /**
  * Context type for calculator state management
@@ -427,6 +452,18 @@ interface CalculatorContextType {
   updatePensions: (pensions: Partial<IcelandicPensionInput>) => void;
   setWithdrawalStrategy: (strategy: WithdrawalStrategy) => void;
   addComparisonScenario: (scenario: ComparisonScenario) => void;
+
+  // Pension-Aware FIRE Calculator (Lífeyristengd FIRE Reiknivél)
+  pensionAwareFire: PensionAwareFireState | null;
+  pensionAwareFireResults: PensionAwareFireResults | null;
+  updatePensionAwareFireState: (updates: Partial<PensionAwareFireState>) => void;
+  initializePensionAwareFire: () => void;
+  savePensionScenario: (name: string) => void;
+  deletePensionScenario: (id: string) => void;
+  clearPensionAwareFire: () => void;
+  // Integration API
+  getPensionAwareFireState: () => PensionAwareFireState | null;
+  hasPensionAwareFire: () => boolean;
   removeComparisonScenario: (id: string) => void;
   clearRetirementSimulator: () => void;
   // Integration API
@@ -485,6 +522,7 @@ export function CalculatorProvider({
   const [fireTypePreferences, setFireTypePreferences] = useState<FIRETypePreferences | null>(null);
   const [coastFireState, setCoastFireState] = useState<CoastFIREState | null>(null);
   const [retirementSimulator, setRetirementSimulator] = useState<RetirementSimulatorState | null>(null);
+  const [pensionAwareFire, setPensionAwareFire] = useState<PensionAwareFireState | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
 
   // Calculate results whenever inputs change
@@ -713,6 +751,113 @@ export function CalculatorProvider({
     }
   }, [leanFire, results?.actualHourlyWage]);
 
+  // Calculate Pension-Aware FIRE results whenever state changes
+  const pensionAwareFireResults = useMemo((): PensionAwareFireResults | null => {
+    if (!pensionAwareFire) return null;
+
+    try {
+      // Calculate retirement phases
+      const phases = calculateRetirementPhases(pensionAwareFire);
+
+      // Calculate FI numbers
+      const fiMultiplier = 30; // Use 30x for Iceland (3.33% withdrawal rate)
+      const traditionalFINumber = calculateTraditionalFI(
+        pensionAwareFire.monthlyExpenses,
+        fiMultiplier
+      );
+      const pensionAdjustedFINumber = calculatePensionAdjustedFI(pensionAwareFire);
+
+      // Calculate savings difference
+      const savingsDifference = traditionalFINumber - pensionAdjustedFINumber;
+      const savingsPercentageReduction = (savingsDifference / traditionalFINumber) * 100;
+
+      // Calculate total gap years (self-funded period before any pensions)
+      const gapPhase = phases.find(p => p.id === 'gap');
+      const totalGapYears = gapPhase ? gapPhase.durationYears : 0;
+
+      // Calculate timeline projections
+      let yearsToTraditionalFI: number | null = null;
+      let yearsToPensionAdjustedFI: number | null = null;
+      let yearsEarlierRetirement: number | null = null;
+
+      if (pensionAwareFire.monthlySavings > 0) {
+        const monthlyReturn = pensionAwareFire.investmentReturn / 12;
+
+        // Calculate years to traditional FI
+        const monthsToTraditional = Math.log(
+          (traditionalFINumber * monthlyReturn) / pensionAwareFire.monthlySavings + 1
+        ) / Math.log(1 + monthlyReturn);
+        yearsToTraditionalFI = Math.ceil(monthsToTraditional / 12);
+
+        // Calculate years to pension-adjusted FI
+        const monthsToAdjusted = Math.log(
+          (pensionAdjustedFINumber * monthlyReturn) / pensionAwareFire.monthlySavings + 1
+        ) / Math.log(1 + monthlyReturn);
+        yearsToPensionAdjustedFI = Math.ceil(monthsToAdjusted / 12);
+
+        yearsEarlierRetirement = yearsToTraditionalFI - yearsToPensionAdjustedFI;
+      }
+
+      // Calculate pension projections
+      const projectedSereign = calculateProjectedSereign(pensionAwareFire);
+      const projectedTR = calculateTREstimate(pensionAwareFire);
+
+      // Calculate estimated surplus at age 90
+      const lastPhase = phases[phases.length - 1];
+      const estimatedSurplusAt90 = lastPhase?.remainingAtEnd || 0;
+
+      // Determine viability (all phases have sufficient funding)
+      const isViable = phases.every(phase => phase.requiredAtStart >= 0);
+
+      // Generate warnings (simplified - can be expanded later)
+      const warnings: Array<{
+        severity: 'info' | 'warning' | 'error';
+        code: string;
+        messageIs: string;
+        messageEn: string;
+      }> = [];
+
+      if (totalGapYears > 15) {
+        warnings.push({
+          severity: 'warning',
+          code: 'LONG_GAP',
+          messageIs: 'Langur tími án lífeyristekna (yfir 15 ár)',
+          messageEn: 'Long period without pension income (over 15 years)',
+        });
+      }
+
+      if (!isViable) {
+        warnings.push({
+          severity: 'error',
+          code: 'INSUFFICIENT_FUNDS',
+          messageIs: 'Ófullnægjandi fjármunir fyrir alla tímabil',
+          messageEn: 'Insufficient funds for all retirement phases',
+        });
+      }
+
+      return {
+        traditionalFINumber,
+        pensionAdjustedFINumber,
+        fiMultiplier: 30, // From defaults
+        savingsDifference,
+        savingsPercentageReduction,
+        phases,
+        totalGapYears,
+        yearsToTraditionalFI,
+        yearsToPensionAdjustedFI,
+        yearsEarlierRetirement,
+        projectedSereign,
+        projectedTR,
+        estimatedSurplusAt90,
+        isViable,
+        warnings,
+      };
+    } catch (error) {
+      console.error('Error calculating Pension-Aware FIRE results:', error);
+      return null;
+    }
+  }, [pensionAwareFire]);
+
   // Auto-recalculate commute results when actualHourlyWage changes
   useEffect(() => {
     if (!isHydrated || commuteScenarios.length === 0) return;
@@ -915,54 +1060,62 @@ export function CalculatorProvider({
     return () => clearTimeout(timeoutId);
   }, [inputs, scenarios, subscriptions, commuteScenarios, housingScenarios, mealCostData, convenienceExpenses, convenienceGoal, childcareItems, periods, carOwnershipScenarios, emergencyFundData, expenseBaseline, currentExpenses, savingsReport, fiNumberBuilder, fireTypePreferences, coastFireState, isHydrated]);
 
-  // Update functions
+  // Update functions with input validation
+  // @security Sanitizes inputs to prevent NaN, Infinity, and invalid values
   const updateIncome = useCallback((updates: Partial<IncomeInputs>) => {
+    const sanitized = sanitizeIncomeInputs(updates);
     setInputs((prev) => ({
       ...prev,
-      income: { ...prev.income, ...updates },
+      income: { ...prev.income, ...sanitized },
     }));
   }, []);
 
   const updateMoneyExpenses = useCallback(
     (updates: Partial<MoneyExpenses>) => {
+      const sanitized = sanitizeMoneyExpenses(updates);
       setInputs((prev) => ({
         ...prev,
-        moneyExpenses: { ...prev.moneyExpenses, ...updates },
+        moneyExpenses: { ...prev.moneyExpenses, ...sanitized },
       }));
     },
     []
   );
 
   const updateTimeExpenses = useCallback((updates: Partial<TimeExpenses>) => {
+    const sanitized = sanitizeTimeExpenses(updates);
     setInputs((prev) => ({
       ...prev,
-      timeExpenses: { ...prev.timeExpenses, ...updates },
+      timeExpenses: { ...prev.timeExpenses, ...sanitized },
     }));
   }, []);
 
-  // Meal cost update functions
+  // Meal cost update functions with input validation
+  // @security Sanitizes inputs to prevent NaN, Infinity, and invalid values
   const updateMealCostData = useCallback(
     (updates: Partial<MealCostData>) => {
+      const sanitized = sanitizeNumericObject(updates, { allowNegative: false });
       setMealCostData((prev) => ({
         ...prev,
-        ...updates,
+        ...sanitized,
       }));
     },
     []
   );
 
   const updateEatingOut = useCallback((updates: Partial<EatingOutData>) => {
+    const sanitized = sanitizeNumericObject(updates, { allowNegative: false });
     setMealCostData((prev) => ({
       ...prev,
-      eatingOut: { ...prev.eatingOut, ...updates },
+      eatingOut: { ...prev.eatingOut, ...sanitized },
     }));
   }, []);
 
   const updateHomeCooking = useCallback(
     (updates: Partial<HomeCookingData>) => {
+      const sanitized = sanitizeNumericObject(updates, { allowNegative: false });
       setMealCostData((prev) => ({
         ...prev,
-        homeCooking: { ...prev.homeCooking, ...updates },
+        homeCooking: { ...prev.homeCooking, ...sanitized },
       }));
     },
     []
@@ -3708,6 +3861,190 @@ export function CalculatorProvider({
     return retirementSimulator !== null;
   }, [retirementSimulator]);
 
+  // ===== PENSION-AWARE FIRE FUNCTIONS =====
+
+  /**
+   * Update Pension-Aware FIRE state with partial data
+   */
+  const updatePensionAwareFireState = useCallback((updates: Partial<PensionAwareFireState>) => {
+    setPensionAwareFire((prev) => {
+      if (!prev) {
+        // Initialize with defaults if no state exists
+        const initialState: PensionAwareFireState = {
+          currentAge: PENSION_AWARE_DEFAULTS.currentAge,
+          targetRetirementAge: PENSION_AWARE_DEFAULTS.targetRetirementAge,
+          monthlyExpenses: PENSION_AWARE_DEFAULTS.monthlyExpenses,
+          expenseSource: PENSION_AWARE_DEFAULTS.expenseSource,
+          expenseTier: PENSION_AWARE_DEFAULTS.expenseTier,
+          currentSavings: PENSION_AWARE_DEFAULTS.currentSavings,
+          monthlySavings: PENSION_AWARE_DEFAULTS.monthlySavings,
+          investmentReturn: PENSION_AWARE_DEFAULTS.investmentReturn,
+          lifeyrissjodur: DEFAULT_LIFEYRISSJODUR,
+          sereign: DEFAULT_SEREIGN,
+          tr: DEFAULT_TR,
+          savedScenarios: [],
+          lastUpdated: new Date(),
+          version: PENSION_AWARE_DEFAULTS.version,
+          ...updates,
+        };
+        return initialState;
+      }
+
+      return {
+        ...prev,
+        ...updates,
+        lastUpdated: new Date(),
+      };
+    });
+  }, []);
+
+  /**
+   * Initialize Pension-Aware FIRE with defaults
+   */
+  const initializePensionAwareFire = useCallback(() => {
+    // Check if expense baseline exists and use it
+    let monthlyExpenses = PENSION_AWARE_DEFAULTS.monthlyExpenses;
+    let expenseSource: 'baseline' | 'manual' = 'manual';
+    let expenseTier: 'barebones' | 'comfortable' | 'deluxe' = 'comfortable';
+
+    if (expenseBaseline && expenseBaselineResults) {
+      expenseSource = 'baseline';
+      expenseTier = 'comfortable';
+      monthlyExpenses = expenseBaselineResults.totals.comfortable || PENSION_AWARE_DEFAULTS.monthlyExpenses;
+    }
+
+    const initialState: PensionAwareFireState = {
+      currentAge: PENSION_AWARE_DEFAULTS.currentAge,
+      targetRetirementAge: PENSION_AWARE_DEFAULTS.targetRetirementAge,
+      monthlyExpenses,
+      expenseSource,
+      expenseTier,
+      currentSavings: PENSION_AWARE_DEFAULTS.currentSavings,
+      monthlySavings: PENSION_AWARE_DEFAULTS.monthlySavings,
+      investmentReturn: PENSION_AWARE_DEFAULTS.investmentReturn,
+      lifeyrissjodur: DEFAULT_LIFEYRISSJODUR,
+      sereign: DEFAULT_SEREIGN,
+      tr: DEFAULT_TR,
+      savedScenarios: [],
+      lastUpdated: new Date(),
+      version: PENSION_AWARE_DEFAULTS.version,
+    };
+
+    setPensionAwareFire(initialState);
+  }, [expenseBaseline, expenseBaselineResults]);
+
+  /**
+   * Save current state as a named scenario for comparison
+   */
+  const savePensionScenario = useCallback((name: string) => {
+    if (!pensionAwareFire || !pensionAwareFireResults) {
+      console.warn('Cannot save scenario: no state or results available');
+      return;
+    }
+
+    // Limit to 3 scenarios
+    if (pensionAwareFire.savedScenarios.length >= 3) {
+      console.warn('Maximum of 3 scenarios allowed');
+      return;
+    }
+
+    const newScenario: SavedScenario = {
+      id: `scenario-${Date.now()}`,
+      name,
+      createdAt: new Date(),
+      inputs: {
+        currentAge: pensionAwareFire.currentAge,
+        targetRetirementAge: pensionAwareFire.targetRetirementAge,
+        monthlyExpenses: pensionAwareFire.monthlyExpenses,
+        currentSavings: pensionAwareFire.currentSavings,
+        monthlySavings: pensionAwareFire.monthlySavings,
+        investmentReturn: pensionAwareFire.investmentReturn,
+        lifeyrissjodur: pensionAwareFire.lifeyrissjodur,
+        sereign: pensionAwareFire.sereign,
+        tr: pensionAwareFire.tr,
+      },
+      results: pensionAwareFireResults,
+    };
+
+    setPensionAwareFire((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        savedScenarios: [...prev.savedScenarios, newScenario],
+        lastUpdated: new Date(),
+      };
+    });
+  }, [pensionAwareFire, pensionAwareFireResults]);
+
+  /**
+   * Delete a saved scenario
+   */
+  const deletePensionScenario = useCallback((id: string) => {
+    setPensionAwareFire((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        savedScenarios: prev.savedScenarios.filter((s) => s.id !== id),
+        lastUpdated: new Date(),
+      };
+    });
+  }, []);
+
+  /**
+   * Clear all Pension-Aware FIRE data
+   */
+  const clearPensionAwareFire = useCallback(() => {
+    setPensionAwareFire(null);
+  }, []);
+
+  /**
+   * Get Pension-Aware FIRE state (integration API)
+   */
+  const getPensionAwareFireState = useCallback(() => {
+    return pensionAwareFire;
+  }, [pensionAwareFire]);
+
+  /**
+   * Check if Pension-Aware FIRE state exists
+   */
+  const hasPensionAwareFire = useCallback(() => {
+    return pensionAwareFire !== null;
+  }, [pensionAwareFire]);
+
+  // Persist Pension-Aware FIRE state to localStorage
+  useEffect(() => {
+    if (!isHydrated || !pensionAwareFire) return;
+
+    try {
+      safeSetItem(PENSION_AWARE_STORAGE_KEY, pensionAwareFire);
+    } catch (error) {
+      console.error('Error saving Pension-Aware FIRE state to localStorage:', error);
+    }
+  }, [pensionAwareFire, isHydrated]);
+
+  // Load Pension-Aware FIRE state from localStorage on mount
+  useEffect(() => {
+    if (isHydrated) return;
+
+    try {
+      const stored = safeGetItem<PensionAwareFireState>(PENSION_AWARE_STORAGE_KEY);
+      if (stored && stored.version === PENSION_AWARE_DEFAULTS.version) {
+        // Convert date strings back to Date objects
+        const restoredState: PensionAwareFireState = {
+          ...stored,
+          lastUpdated: new Date(stored.lastUpdated),
+          savedScenarios: stored.savedScenarios.map((scenario) => ({
+            ...scenario,
+            createdAt: new Date(scenario.createdAt),
+          })),
+        };
+        setPensionAwareFire(restoredState);
+      }
+    } catch (error) {
+      console.error('Error loading Pension-Aware FIRE state from localStorage:', error);
+    }
+  }, [isHydrated]);
+
   const value: CalculatorContextType = {
     inputs,
     setInputs,
@@ -3905,6 +4242,16 @@ export function CalculatorProvider({
     clearRetirementSimulator,
     getRetirementSimulator,
     hasRetirementSimulator,
+    // Pension-Aware FIRE Calculator
+    pensionAwareFire,
+    pensionAwareFireResults,
+    updatePensionAwareFireState,
+    initializePensionAwareFire,
+    savePensionScenario,
+    deletePensionScenario,
+    clearPensionAwareFire,
+    getPensionAwareFireState,
+    hasPensionAwareFire,
     saveToStorage,
     loadFromStorage,
     exportData: exportDataHandler,

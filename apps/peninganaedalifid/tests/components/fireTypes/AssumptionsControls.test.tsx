@@ -97,7 +97,7 @@ describe('AssumptionsControls Component', () => {
 
     it('shows help text for withdrawal rate', () => {
       expect(screen.getByText(/Hvað er þetta\?/i)).toBeInTheDocument();
-      expect(screen.getByText(/25x árlega útgjöld/i)).toBeInTheDocument();
+      expect(screen.getByText(/25x árleg útgjöld/i)).toBeInTheDocument();
     });
 
     it('updates withdrawal rate when slider changes', () => {

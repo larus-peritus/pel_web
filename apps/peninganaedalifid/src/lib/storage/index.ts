@@ -6,9 +6,14 @@
 
 export { safeGetItem, safeSetItem, safeRemoveItem } from './localStorage';
 export {
-  exportData,
-  importData,
-  isValidStoredState,
-  migrateState,
-  type StoredState,
+  exportUserData,
+  importUserData,
+  readFileAsText,
+  validateImportData,
+  getExportableData,
+  EXPORTABLE_STORAGE_KEYS,
+  STORAGE_KEY_LABELS,
+  type ExportData,
+  type ExportResult,
+  type ImportResult,
 } from './exportImport';

@@ -71,8 +71,9 @@ export function calculateFINumber(
  * calculateWithdrawalRate(25) // => 0.04
  */
 export function calculateWithdrawalRate(multiplier: number): number {
-  // Edge case: Zero multiplier
-  if (multiplier === 0) {
+  // @security Handle zero or negative multiplier to prevent division by zero
+  // and invalid negative withdrawal rates
+  if (multiplier <= 0 || !Number.isFinite(multiplier)) {
     return 0;
   }
 

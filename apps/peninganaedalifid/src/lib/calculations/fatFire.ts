@@ -215,6 +215,11 @@ export function calculateTimelineProjection(
       // Apply monthly growth
       balance *= 1 + monthlyRate;
       months++;
+
+      // @security Check for overflow - if balance becomes Infinity or NaN, exit
+      if (!Number.isFinite(balance)) {
+        return null;
+      }
     }
 
     if (months >= maxMonths) {
@@ -432,6 +437,9 @@ export function generateTimelineChartData(
         balance += monthlySavings;
         balance *= 1 + monthlyRate;
       }
+
+      // @security Check for overflow - if balance becomes Infinity or NaN, exit
+      if (!Number.isFinite(balance)) break;
 
       // Stop if we've reached FI
       if (balance >= fiNumber) break;

@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   description: "Reiknaðu raunverulegt tímakaup þitt með því að taka tillit til alls falins vinnukostnaðar og tíma. Byggt á aðferðafræði Your Money or Your Life.",
   icons: {
     icon: '/icon.png',
-    apple: '/icon.png',
+    apple: '/apple-icon.png',
   },
 };
 

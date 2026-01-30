@@ -138,7 +138,7 @@ export function FatFIREResults() {
           {wishListMonthlyTotal > 0 && (
             <div className="flex items-center justify-between rounded-lg bg-yellow-50 p-4">
               <div>
-                <p className="font-medium text-gray-900">Óskarlisti</p>
+                <p className="font-medium text-gray-900">Óskalisti</p>
                 <p className="text-sm text-gray-600">
                   {mustHaveTotal > 0 && (
                     <span>

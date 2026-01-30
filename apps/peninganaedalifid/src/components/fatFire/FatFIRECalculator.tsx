@@ -22,6 +22,7 @@ import { FatFIREResults } from './FatFIREResults';
 import { ExpenseBreakdownChart } from './ExpenseBreakdownChart';
 import { MilestoneTracker } from './MilestoneTracker';
 import { TimelineProjection } from './TimelineProjection';
+import { EducationalIntro } from './EducationalIntro';
 
 export interface FatFIRECalculatorProps {
   /** Optional: Show back button for integration in calculator hub */
@@ -38,7 +39,8 @@ export function FatFIRECalculator({ onBack }: FatFIRECalculatorProps = {}) {
     results,
   } = useCalculator();
 
-  const [showIntro, setShowIntro] = useState(true);
+  const [introCollapsed, setIntroCollapsed] = useState(true);
+  const [introDismissed, setIntroDismissed] = useState(false);
 
   // Initialize state if needed
   useEffect(() => {
@@ -109,48 +111,12 @@ export function FatFIRECalculator({ onBack }: FatFIRECalculatorProps = {}) {
       <Container className="py-12">
         <div className="space-y-8">
           {/* Educational Introduction */}
-          {showIntro && (
-            <Alert
-              variant="info"
-              onDismiss={() => setShowIntro(false)}
-              className="border-amber-200 bg-amber-50"
-            >
-              <div className="space-y-3">
-                <h3 className="font-semibold text-amber-900">
-                  Hvað er FatFIRE? 💰
-                </h3>
-                <div className="space-y-2 text-sm text-amber-800">
-                  <p>
-                    <strong>FatFIRE</strong> er Financial Independence með{' '}
-                    <em>framúrskarandi lífsstíl</em>. Þetta er ekki um
-                    sparnaðarbúskap - það er um að lifa fullkomlega án
-                    fjárhagslegra áhyggna.
-                  </p>
-                  <ul className="ml-5 list-disc space-y-1">
-                    <li>
-                      <strong>Lúxus grunnútgjöld:</strong> Premium húsnæði,
-                      ferðir, upplifanir
-                    </li>
-                    <li>
-                      <strong>Óskarlisti:</strong> Byggðu lista yfir lífsstíl
-                      draumana þinna
-                    </li>
-                    <li>
-                      <strong>Aukaútgjaldaáætlun:</strong> Árleg áætlun fyrir
-                      sjálfsprottnar lúxusvörur
-                    </li>
-                    <li>
-                      <strong>Öruggt:</strong> 30x margfaldari (3.33% úttekt)
-                      fyrir hámarks öryggi
-                    </li>
-                  </ul>
-                  <p className="pt-2 text-xs">
-                    💡 <em>FatFIRE krefst meiri sparnaðar en veitir fullkomna
-                    lífsstílsfrelsi</em>
-                  </p>
-                </div>
-              </div>
-            </Alert>
+          {!introDismissed && (
+            <EducationalIntro
+              collapsed={introCollapsed}
+              onToggle={() => setIntroCollapsed(!introCollapsed)}
+              onDismiss={() => setIntroDismissed(true)}
+            />
           )}
 
           {/* Info if no expense baseline */}

@@ -141,6 +141,11 @@ export function calculateYearsToCoast(
   // Calculate years using logarithms
   const years = Math.log(ratio) / Math.log(1 + rate);
 
+  // @security Validate result - catch any NaN, Infinity, or negative edge cases
+  if (!Number.isFinite(years) || years < 0) {
+    return null;
+  }
+
   // Sanity check: if > 100 years, effectively impossible
   if (years > CALCULATION_CONSTANTS.MAX_PROJECTION_YEARS) {
     return null;
