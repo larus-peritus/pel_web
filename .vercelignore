@@ -13,7 +13,7 @@ eslint.config.mjs
 # Documentation and specs (not needed in production)
 docs/
 specs/
-context/
+/context/
 README.md
 
 # Build artifacts and caches
